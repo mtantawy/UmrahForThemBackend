@@ -11,6 +11,18 @@
 |
 */
 
+Route::group(['domain' => 'api.umrahforthem.app'], function () {
+	Route::group(['prefix' => 'v1', 'namespace' => 'API/v1'], function () {
+		Route::get('/', function () {
+		    return 'API v1!';
+		});
+		
+	});
+	Route::get('/', function () {
+	    return 'API Home!';
+	});
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
