@@ -15,9 +15,17 @@ class DeceasedController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // sorting
+        $sort_by    =   $request->has('sort_by') ? $request->input('sort_by') : 'created_at' ;
+        $sort       =   $request->has('sort') ? $request->input('sort') : 'desc' ;
+
+        // pagination
+        $per_page    =   $request->has('per_page') ? $request->input('per_page') : 10 ;
+        
+        return Deceased::orderBy($sort_by, $sort)
+                ->paginate($per_page);
     }
 
     /**
