@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\v1;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Response;
 
 use App\Deceased;
 
@@ -46,7 +47,7 @@ class DeceasedController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return Deceased::Create($request->all());
     }
 
     /**
@@ -80,7 +81,7 @@ class DeceasedController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return Response::json(Deceased::findOrFail($id)->update(['name' => $request->input('name')]));
     }
 
     /**
@@ -91,6 +92,7 @@ class DeceasedController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $deceased = Deceased::findOrFail($id);
+        return $deceased->delete();
     }
 }
