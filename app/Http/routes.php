@@ -12,11 +12,14 @@
 */
 
 Route::group(['domain' => 'api.umrahforthem.app'], function () {
-	Route::group(['prefix' => 'v1', 'namespace' => 'API\v1'], function () {
+	Route::group(['prefix' => 'v1', 'namespace' => 'API\v1', 'middleware' => 'oauth'], function () {
 		Route::get('/', function () {
 		    return 'API v1!';
 		});
-		Route::resource('deceased', 'DeceasedController');
+		Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
+	});
+	Route::post('oauth/access_token', function() {
+	    return Response::json(Authorizer::issueAccessToken());
 	});
 	Route::get('/', function () {
 	    return 'API Home!';
