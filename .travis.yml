@@ -15,5 +15,8 @@ env:
 install:
     - travis_retry composer install --no-interaction --prefer-source
 
+before_script:
+    - phpenv config-rm xdebug.ini || true
+
 script:
     - vendor/bin/phpunit
