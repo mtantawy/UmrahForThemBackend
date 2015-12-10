@@ -8,6 +8,10 @@ php:
 
 sudo: false
 
+env:
+   global:
+      - APP_KEY=WOZryj3ZBRIEAk5Az05rcnGXEhmIoRUW
+
 install:
     - travis_retry composer install --no-interaction --prefer-source
 
