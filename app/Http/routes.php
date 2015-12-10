@@ -11,8 +11,8 @@
 |
 */
 
-Route::group(['domain' => 'api.umrahforthem.app'], function () {
-	Route::group(['prefix' => 'v1', 'namespace' => 'API\v1', 'middleware' => 'oauth'], function () {
+Route::group(['prefix' => 'api'], function () {
+	Route::group(['prefix' => 'v1', 'namespace' => 'API\v1', /*'middleware' => 'oauth'*/], function () {
 		Route::get('/', function () {
 		    return 'API v1!';
 		});
