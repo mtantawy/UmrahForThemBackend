@@ -16,5 +16,4 @@ install:
     - travis_retry composer install --no-interaction --prefer-source
 
 script:
-    - php artisan key:generate
     - vendor/bin/phpunit
