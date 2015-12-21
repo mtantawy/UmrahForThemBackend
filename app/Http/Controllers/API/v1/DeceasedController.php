@@ -81,7 +81,8 @@ class DeceasedController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return Response::json(Deceased::findOrFail($id)->update(['name' => $request->input('name')]));
+        return Response::json(Deceased::findOrFail($id)
+                ->update($request->only(['name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date'])));
     }
 
     /**
@@ -93,6 +94,6 @@ class DeceasedController extends Controller
     public function destroy($id)
     {
         $deceased = Deceased::findOrFail($id);
-        return $deceased->delete();
+        return Response::json($deceased->delete());
     }
 }
