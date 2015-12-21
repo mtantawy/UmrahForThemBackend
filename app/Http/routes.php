@@ -17,6 +17,7 @@ Route::group(['prefix' => 'api'], function () {
 		    return 'API v1!';
 		});
 		Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
+		Route::resource('users', 'UserController', ['except' => ['index', 'create', 'edit']]);
 	});
 	Route::post('oauth/access_token', function() {
 	    return Response::json(Authorizer::issueAccessToken());
