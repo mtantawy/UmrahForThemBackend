@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class staticPagesTest extends TestCase
 {
+    use WithoutMiddleware;
+    
     /**
      * A basic test example.
      *
