@@ -21,13 +21,15 @@ env:
       - DB_USERNAME=root
       - DB_PASSWORD=
 
+before_install:
+    - phpenv config-rm xdebug.ini || true
+
 install:
     - travis_retry composer self-update
     - travis_retry composer install --no-interaction --prefer-source
     - travis_retry composer update --no-interaction
 
 before_script:
-    - phpenv config-rm xdebug.ini || true
     - mysql -e 'create database umrahforthem;'
     - php artisan migrate
 

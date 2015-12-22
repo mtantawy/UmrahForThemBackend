@@ -22,11 +22,20 @@ class DeceasedTest extends TestCase
     public function testDeceasedIndex()
     {
         $this->withoutMiddleware();
-        
+
+        Deceased::Create([
+                'name'  =>  'test name',
+                'sex'   =>  'male',
+                'age'   =>  10,
+                'country'   =>  'Egypt',
+                'city'  =>  'Cairo',
+                'death_cause'   =>  'test cause of death',
+                'death_date'    =>  '2015-12-20'
+            ]);
+
     	$response = $this->call('get', '/api/v1/deceased', ['access_token' => 'RBIxvcc48fyeytw1d01206gFUNETlHqsmMHQITdN']);
     	$this->assertResponseOk($response);
     	$this->seeJson([
-    				"id"	=>	24,
 					"name"	=>	"test name",
 					"sex"	=>	"male",
 					"age"	=>	10,
@@ -34,8 +43,6 @@ class DeceasedTest extends TestCase
 					"city"	=>	"Cairo",
 					"death_cause"	=>	"test cause of death",
 					"death_date"	=>	"2015-12-20",
-					"created_at"	=>	"2015-12-20 21:06:54",
-					"updated_at"	=>	"2015-12-20 21:06:54"
     			]);
     }
 
