@@ -8,15 +8,25 @@ php:
 
 sudo: false
 
+services:
+    - mysql
+
 env:
    global:
+      - APP_ENV=testing
+      - APP_DEBUG=true
       - APP_KEY=WOZryj3ZBRIEAk5Az05rcnGXEhmIoRUW
+      - DB_HOST=localhost
+      - DB_DATABASE=umrahforthem
+      - DB_USERNAME=root
+      - DB_PASSWORD=
 
 install:
     - travis_retry composer install --no-interaction --prefer-source
 
 before_script:
     - phpenv config-rm xdebug.ini || true
+    - mysql -e 'create database umrahforthem;'
 
 script:
     - vendor/bin/phpunit
