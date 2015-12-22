@@ -38,7 +38,7 @@ class DeceasedTest extends TestCase
     	$this->seeJson([
 					"name"	=>	"test name",
 					"sex"	=>	"male",
-					"age"	=>	10,
+					"age"	=>	"10",
 					"country"	=>	"Egypt",
 					"city"	=>	"Cairo",
 					"death_cause"	=>	"test cause of death",
