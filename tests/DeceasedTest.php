@@ -15,15 +15,14 @@ class DeceasedTest extends TestCase
     public function testFakerFactory()
     {
     	$count = 1;
-    	\Log::debug(json_encode(\App\User::all()));
     	$user = factory(App\User::class, $count)->make();
     	$user = factory(App\User::class)->create();
-    	\Log::debug(json_encode(\App\User::all()));
-    	\Log::debug(json_encode($user));
     }
 
     public function testDeceasedIndex()
     {
+        $this->withoutMiddleware();
+        
     	$response = $this->call('get', '/api/v1/deceased', ['access_token' => 'RBIxvcc48fyeytw1d01206gFUNETlHqsmMHQITdN']);
     	$this->assertResponseOk($response);
     	$this->seeJson([
