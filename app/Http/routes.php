@@ -17,10 +17,13 @@ Route::group(['prefix' => 'api'], function () {
 		    return 'API v1!';
 		});
 		Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
-		Route::resource('users', 'UserController', ['except' => ['index', 'create', 'edit']]);
+		Route::resource('users', 'UserController', ['except' => ['index', 'create', 'edit', 'store']]);
 	});
-	Route::post('oauth/access_token', function() {
-	    return Response::json(Authorizer::issueAccessToken());
+	Route::group(['prefix' => 'v1', 'namespace' => 'API\v1'], function () {
+		Route::post('register', 'UserController@store');
+		Route::post('login', function() {
+		    return Response::json(Authorizer::issueAccessToken());
+		});
 	});
 	Route::get('/', function () {
 	    return 'API Home!';
