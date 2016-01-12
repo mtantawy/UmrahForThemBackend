@@ -22,6 +22,7 @@ Route::group(['prefix' => 'api'], function () {
 			Route::get('/', function () {
 			    return 'API v1!';
 			});
+			Route::get( 'deceased/myrequests', [ 'as' => 'user.deceased.myrequests', 'uses' => 'DeceasedController@myRequests' ] );
 			Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
 			Route::resource('users', 'UserController', ['except' => ['index', 'create', 'edit', 'store']]);
 		});

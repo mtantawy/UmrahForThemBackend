@@ -37,6 +37,20 @@ class DeceasedController extends Controller
                 ->paginate($per_page);
     }
 
+    public function myRequests(Request $request)
+    {
+        // sorting
+        $sort_by    =   $request->has('sort_by') ? $request->input('sort_by') : 'created_at' ;
+        $sort       =   $request->has('sort') ? $request->input('sort') : 'desc' ;
+
+        // pagination
+        $per_page    =   $request->has('per_page') ? $request->input('per_page') : 10 ;
+        
+        return Deceased::orderBy($sort_by, $sort)
+                ->where('user_id', $this->oauth_user->owner_id)
+                ->paginate($per_page);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
