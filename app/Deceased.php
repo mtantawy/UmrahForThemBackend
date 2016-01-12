@@ -10,5 +10,10 @@ class Deceased extends Model
     protected $casts =	[
     	'age'	=>	'integer',
     ];
-    protected $fillable = ['name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date'];
+    protected $fillable = ['name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'user_id'];
+
+    public function user()
+    {
+    	return $this->belongsTo('App\User');
+    }
 }
