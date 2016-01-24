@@ -30,8 +30,7 @@ class UmrahController extends Controller
         
         return Umrah::orderBy('created_at', 'desc')
                 ->where('user_id', $this->oauth_user->owner_id)
-                ->with('umrahStatus')
-                ->with('deceased')
+                ->with('umrahStatus', 'deceased')
                 ->whereIn('umrah_status_id', [1, 2])
                 ->paginate($per_page);
     }
@@ -55,11 +54,10 @@ class UmrahController extends Controller
      */
     public function show($id)
     {
-        return Umrah::findOrFail($id)
-                        ->with('umrahStatus')
-                        ->with('deceased')
-                        ->with('user')
-                        ->get();
+        $umrah = Umrah::findOrFail($id);
+        $this->authorize('show', $umrah);
+
+        return $umrah->load('umrahStatus', 'deceased', 'user');
     }
 
     /**
