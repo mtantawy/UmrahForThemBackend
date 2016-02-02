@@ -23,10 +23,15 @@ Route::group(['prefix' => 'api'], function () {
                 return 'API v1!';
             });
             Route::get('deceased/myrequests', ['as' => 'user.deceased.myrequests', 'uses' => 'DeceasedController@myRequests']);
+            Route::patch('deceased/{deceased}/updatestatus/{status}', ['as' => 'deceased.umrah.update', 'uses' => 'DeceasedController@updateStatus']);
             Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
             Route::resource('users', 'UserController', ['except' => ['index', 'create', 'edit', 'store']]);
             Route::resource('umrah', 'UmrahController', ['only' => ['index', 'store', 'update', 'show']]);
+            Route::resource('deceased.umrah', 'DeceasedUmrahController');
         });
+
+        // allow guest mode to view deceased with no umrahs
+        Route::get('deceased', ['uses' => 'DeceasedController@index']);
     });
 
     Route::get('/', function () {
