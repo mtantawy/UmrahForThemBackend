@@ -12,25 +12,26 @@
 */
 
 Route::group(['prefix' => 'api'], function () {
-	Route::group(['prefix' => 'v1', 'namespace' => 'API\v1'], function () {
-		Route::post('register', 'UserController@store');
-		Route::post('login', function() {
-		    return Response::json(Authorizer::issueAccessToken());
-		});
+    Route::group(['prefix' => 'v1', 'namespace' => 'API\v1'], function () {
+        Route::post('register', 'UserController@store');
+        Route::post('login', function () {
+            return Response::json(Authorizer::issueAccessToken());
+        });
 
-		Route::group(['prefix' => '/', 'middleware'	=>	'oauth'], function () {
-			Route::get('/', function () {
-			    return 'API v1!';
-			});
-			Route::get( 'deceased/myrequests', [ 'as' => 'user.deceased.myrequests', 'uses' => 'DeceasedController@myRequests' ] );
-			Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
-			Route::resource('users', 'UserController', ['except' => ['index', 'create', 'edit', 'store']]);
-		});
-	});
-	
-	Route::get('/', function () {
-	    return 'API Home!';
-	});
+        Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
+            Route::get('/', function () {
+                return 'API v1!';
+            });
+            Route::get('deceased/myrequests', ['as' => 'user.deceased.myrequests', 'uses' => 'DeceasedController@myRequests']);
+            Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
+            Route::resource('users', 'UserController', ['except' => ['index', 'create', 'edit', 'store']]);
+            Route::resource('umrah', 'UmrahController', ['only' => ['index', 'store', 'update', 'show']]);
+        });
+    });
+
+    Route::get('/', function () {
+        return 'API Home!';
+    });
 });
 
 Route::get('/', function () {

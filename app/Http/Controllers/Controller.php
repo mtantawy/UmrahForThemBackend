@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace app\Http\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -14,12 +14,15 @@ abstract class Controller extends BaseController
     public function getUserByAccessToken($request)
     {
         $access_token = $this->getAccessToken($request);
-        if(false === $access_token) return false;
+        if (false === $access_token) {
+            return false;
+        }
         $user = \DB::table('oauth_sessions')
                             ->select(['oauth_sessions.owner_id', 'oauth_sessions.client_id'])
                             ->join('oauth_access_tokens', 'oauth_access_tokens.session_id', '=', 'oauth_sessions.id')
                             ->where('oauth_access_tokens.id', $access_token)
                             ->first();
+        \Auth::loginUsingId($user->owner_id);
         return $user;
     }
 

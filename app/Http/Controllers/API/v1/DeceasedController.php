@@ -11,6 +11,13 @@ use App\Deceased;
 
 class DeceasedController extends Controller
 {
+    private $oauth_user;
+
+    public function __construct(Request $request)
+    {
+        $this->oauth_user = $this->getUserByAccessToken($request);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,6 +33,7 @@ class DeceasedController extends Controller
         $per_page    =   $request->has('per_page') ? $request->input('per_page') : 10 ;
         
         return Deceased::orderBy($sort_by, $sort)
+                ->with('user')
                 ->paginate($per_page);
     }
 
