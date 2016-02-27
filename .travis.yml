@@ -1,0 +1,37 @@
+language: php
+
+php:
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
+
+sudo: false
+
+services:
+    - mysql
+
+env:
+   global:
+      - APP_ENV=testing
+      - APP_DEBUG=true
+      - APP_KEY=WOZryj3ZBRIEAk5Az05rcnGXEhmIoRUW
+      - DB_HOST=localhost
+      - DB_DATABASE=umrahforthem
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+
+before_install:
+    - phpenv config-rm xdebug.ini || true
+
+install:
+    - travis_retry composer self-update
+    - travis_retry composer install --no-interaction --prefer-source
+    - travis_retry composer update --no-interaction
+
+before_script:
+    - mysql -e 'create database umrahforthem;'
+    - php artisan migrate
+
+script:
+    - vendor/bin/phpunit
