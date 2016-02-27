@@ -1,12 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\API\v1;
+namespace app\Http\Controllers\API\v1;
 
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use App\Umrah;
 
 class UmrahController extends Controller
@@ -26,8 +23,8 @@ class UmrahController extends Controller
     public function index(Request $request)
     {
         // pagination
-        $per_page    =   $request->has('per_page') ? $request->input('per_page') : 10 ;
-        
+        $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
+
         return Umrah::orderBy('created_at', 'desc')
                 ->where('user_id', $this->oauth_user->owner_id)
                 ->with('umrahStatus', 'deceased')
@@ -38,7 +35,8 @@ class UmrahController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -49,12 +47,17 @@ class UmrahController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $umrah = Umrah::findOrFail($id);
+        $umrah = Umrah::find($id);
+        if (null === $umrah) {
+            return response()->json('Umrah not found.', 404);
+        }
+
         $this->authorize('show', $umrah);
 
         return $umrah->load('umrahStatus', 'deceased', 'user');
@@ -63,8 +66,9 @@ class UmrahController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)

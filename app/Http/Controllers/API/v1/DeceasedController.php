@@ -83,7 +83,12 @@ class DeceasedController extends Controller
      */
     public function show($id)
     {
-        return Deceased::findOrFail($id);
+        $deceased = Deceased::find($id);
+        if (null === $deceased) {
+            return response()->json('Deceased not found.', 404);
+        } else {
+            return $deceased;
+        }
     }
 
     /**
