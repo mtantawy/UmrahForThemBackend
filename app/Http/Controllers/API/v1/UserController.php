@@ -73,8 +73,15 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if ($id != \Auth::User()->id) {
+            return Response::json('You are not authorized to edit this resource.', 401);
+        }
+        $profile = $request->only(['name', 'email']);
+        if ($request->has('password') && !empty($request->input('password'))) {
+            $profile = array_merge($profile, ['password' => bcrypt($request->input('password'))]);
+        }
         return Response::json(User::findOrFail($id)
-                ->update(array_merge($request->only(['name', 'email']), ['password' => bcrypt($request->input('password'))])));
+                ->update($profile));
     }
 
     /**
