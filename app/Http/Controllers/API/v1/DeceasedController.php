@@ -49,6 +49,7 @@ class DeceasedController extends Controller
 
         return Deceased::orderBy($sort_by, $sort)
                 ->where('user_id', $this->oauth_user->owner_id)
+                ->with('user')
                 ->paginate($per_page);
     }
 
