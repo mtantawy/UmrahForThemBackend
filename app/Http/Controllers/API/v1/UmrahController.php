@@ -55,7 +55,7 @@ class UmrahController extends Controller
     {
         $umrah = Umrah::find($id);
         if (null === $umrah) {
-            return response()->json('Umrah not found.', 404);
+            return response()->json(['error_message' => 'Umrah not found.'], 404);
         }
 
         $this->authorize('show', $umrah);

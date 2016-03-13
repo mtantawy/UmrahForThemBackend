@@ -86,7 +86,7 @@ class DeceasedController extends Controller
     {
         $deceased = Deceased::find($id);
         if (null === $deceased) {
-            return response()->json('Deceased not found.', 404);
+            return response()->json(['error_message' => 'Deceased not found.'], 404);
         } else {
             return $deceased;
         }
