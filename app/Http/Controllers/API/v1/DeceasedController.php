@@ -72,7 +72,7 @@ class DeceasedController extends Controller
      */
     public function store(Request $request)
     {
-        return Deceased::Create($request->all());
+        return Deceased::Create(array_merge($request->all(), ['user_id' => \Auth::User()->id]));
     }
 
     /**
