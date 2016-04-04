@@ -49,6 +49,7 @@ class DeceasedController extends Controller
 
         return Deceased::orderBy($sort_by, $sort)
                 ->where('user_id', $this->oauth_user->owner_id)
+                ->with('user')
                 ->paginate($per_page);
     }
 
@@ -71,7 +72,7 @@ class DeceasedController extends Controller
      */
     public function store(Request $request)
     {
-        return Deceased::Create($request->all());
+        return Deceased::Create(array_merge($request->all(), ['user_id' => \Auth::User()->id]));
     }
 
     /**
@@ -85,7 +86,7 @@ class DeceasedController extends Controller
     {
         $deceased = Deceased::find($id);
         if (null === $deceased) {
-            return response()->json('Deceased not found.', 404);
+            return response()->json(['error_message' => 'Deceased not found.'], 404);
         } else {
             return $deceased;
         }
