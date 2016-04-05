@@ -34,6 +34,20 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('deceased', ['uses' => 'DeceasedController@index']);
     });
 
+    Route::group(['prefix' => 'v2', 'namespace' => 'API\v2'], function () {
+        Route::post('register', 'UserController@store');
+        Route::post('login', function () {
+            return Response::json(Authorizer::issueAccessToken());
+        });
+
+        Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
+            Route::get('/', function () {
+                return 'API v2!';
+            });
+            Route::get('users/me', 'UserController@show');
+        });
+    });
+
     Route::get('/', function () {
         return 'API Home!';
     });
