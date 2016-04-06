@@ -14,6 +14,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable, Authorizable, CanResetPassword;
 
+    protected $casts = [
+        'id' => 'integer',
+    ];
+
     /**
      * The database table used by the model.
      *
