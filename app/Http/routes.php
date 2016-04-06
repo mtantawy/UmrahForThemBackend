@@ -45,6 +45,7 @@ Route::group(['prefix' => 'api'], function () {
                 return 'API v2!';
             });
             Route::get('users/me', 'UserController@show');
+            Route::resource('umrah', 'UmrahController', ['except'   =>  ['create', 'edit']]);
         });
     });
 
