@@ -12,8 +12,6 @@ class UsersTest extends TestCase
     use DatabaseTransactions;
 
     private $faker;
-    private $is_initialised = false;
-
 
     public function setUp()
     {
