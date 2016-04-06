@@ -11,6 +11,10 @@ class UsersTest extends TestCase
 {
     use DatabaseTransactions;
 
+    private $faker;
+    private $is_initialised = false;
+
+
     public function setUp()
     {
         parent::setUp();
@@ -53,6 +57,14 @@ class UsersTest extends TestCase
      */
     public function can_login_a_user_and_get_access_token()
     {
+        \DB::table('oauth_clients')->insert(
+            [
+                'id'        => 1,
+                'secret'    =>  'secret',
+                'name'      =>  'client_name',
+            ]
+        );
+
         // create user in DB
         $password = bcrypt(str_random(10));
         $user = [
@@ -85,6 +97,14 @@ class UsersTest extends TestCase
      */
     public function can_get_logged_in_user_info()
     {
+        \DB::table('oauth_clients')->insert(
+            [
+                'id'        =>  2,
+                'secret'    =>  'secret',
+                'name'      =>  'client_name',
+            ]
+        );
+
         // create user in DB
         $password = bcrypt(str_random(10));
         $user = [
@@ -96,7 +116,7 @@ class UsersTest extends TestCase
         // try to login user
         $login_agrs = [
             'grant_type'    =>  'password',
-            'client_id'     =>  1,
+            'client_id'     =>  2,
             'client_secret' =>  'secret',
             'username'      =>  $user['email'],
             'password'      =>  $password,
