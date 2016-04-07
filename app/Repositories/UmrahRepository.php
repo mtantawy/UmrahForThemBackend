@@ -17,4 +17,12 @@ class UmrahRepository
 
         return Deceased::Create($data);
     }
+
+    public function getDeceasedWithNoUmrah()
+    {
+        return Deceased::select('deceased.*')
+                ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
+                ->whereNull('umrahs.created_at')
+                ->with('user');
+    }
 }

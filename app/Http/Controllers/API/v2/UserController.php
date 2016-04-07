@@ -22,7 +22,10 @@ class UserController extends Controller
         return User::Create(
             array_merge(
                 $request->only(['name', 'email']),
-                ['password' => bcrypt($request->input('password'))]
+                [
+                    'password' => bcrypt($request->input('password')),
+                    'remember_token' => str_random(10),
+                ]
             )
         );
     }

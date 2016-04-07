@@ -93,4 +93,30 @@ class UmrahTest extends TestCase
             'created_user_id'   =>  $created_user->id,
         ];
     }
+
+    /**
+     * @test
+     * test getting deceased with no umrahs (no umrahs with status done or in progress)
+     * @method can_get_deceased_with_no_umrahs
+     * @return [void]
+     */
+    public function can_get_deceased_with_no_umrahs()
+    {
+        // create deceased
+        $deceased_no_umrah = factory(App\Deceased::class)->create();
+        $deceased_with_umrah = factory(App\Deceased::class)->create();
+        $deceased_with_umrah->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make());
+
+        extract($this->create_user_and_get_access_token());
+
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/', [], [], [], $headers);
+        $this->assertResponseOk($response);
+
+        // checking on id because any other faked data can be repeated
+        $this->seeJson(['id' => $deceased_no_umrah->toArray()['id']]);
+        $this->dontSeeJson(['id' => $deceased_with_umrah->toArray()['id']]);
+    }
 }

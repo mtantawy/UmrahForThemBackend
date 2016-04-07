@@ -21,9 +21,34 @@ class UmrahController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // sorting
+        $sort_by = $request->has('sort_by') ? $request->input('sort_by') : 'created_at';
+        $sort = $request->has('sort') ? $request->input('sort') : 'desc';
+
+        // pagination
+        $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
+
+        $deceased_list  = $this->umrah
+                                ->getDeceasedWithNoUmrah()
+                                ->orderBy($sort_by, $sort)
+                                ->paginate($per_page);
+        $deceased_list->transform(function ($item, $key) {
+            $item->creator = $item->user;
+            $item->creator->user_id = $item->creator->id;
+            return $item;
+        });
+
+        // moving unset to another transform round to avoid unsetting any required objects
+        $deceased_list->transform(function ($item, $key) {
+            unset($item->user_id);
+            unset($item->user);
+            unset($item->creator->id);
+            return $item;
+        });
+
+        return $deceased_list;
     }
 
     /**
