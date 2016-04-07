@@ -47,6 +47,14 @@ class UmrahTest extends TestCase
             ]);
         $response = $this->call('POST', '/api/v2/umrah/', $parameters, [], [], $headers);
         $this->assertResponseOk($response);
+        // check seeInDatabase
+        $this->seeInDatabase(
+            'deceased',
+            $parameters
+        );
+        // modify parameters for response check
+        $parameters['creator_id'] = $parameters['user_id'];
+        unset($parameters['user_id']);
         $this->seeJson($parameters);
     }
 

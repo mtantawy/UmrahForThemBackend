@@ -50,12 +50,21 @@ class UmrahController extends Controller
                     'Error Message' =>  $validator->messages()
                 ], 400);
         } else {
-            return \App\Deceased::Create(
-                array_merge(
-                    $request->all(),
-                    ['user_id' => \Authorizer::getResourceOwnerId()]
-                )
+            $deceased = $this->umrah->storeDeceased(
+                $request->only('name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date')
             );
+
+            return [
+                'id'    =>  $deceased->id,
+                'name'  =>  $deceased->name,
+                'age'   =>  $deceased->age,
+                'sex'   =>  $deceased->sex,
+                'country'   =>  $deceased->country,
+                'city'  =>  $deceased->city,
+                'death_cause'   =>  $deceased->death_cause,
+                'death_date'    =>  $deceased->death_date,
+                'creator_id'    =>  $deceased->user_id
+            ];
         }
     }
 
