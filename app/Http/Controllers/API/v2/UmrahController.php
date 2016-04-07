@@ -45,7 +45,10 @@ class UmrahController extends Controller
            ]);
 
         if ($validator->fails()) {
-            return response()->json('Bad Request: Validation failed.', '400');
+            return response()->json([
+                    'Error' =>  'Bad Request: Validation failed.',
+                    'Error Message' =>  $validator->messages()
+                ], 400);
         } else {
             return \App\Deceased::Create(
                 array_merge(
