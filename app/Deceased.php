@@ -9,7 +9,8 @@ class Deceased extends Model
     protected $table = 'deceased';
     protected $casts = [
         'age'       =>  'integer',
-        'user_id'   =>  'integer'
+        'user_id'   =>  'integer',
+        'id'        =>  'integer',
     ];
     protected $fillable = ['name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'user_id'];
 
