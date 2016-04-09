@@ -25,4 +25,11 @@ class UmrahRepository
                 ->whereNull('umrahs.created_at')
                 ->with('user');
     }
+
+    public function getMyRequests()
+    {
+        return Deceased::orderBy($sort_by, $sort)
+                ->where('user_id', \Authorizer::getResourceOwnerId())
+                ->with('umrahs');
+    }
 }
