@@ -70,16 +70,8 @@ class UmrahController extends Controller
                                 ->orderBy($sort_by, $sort)
                                 ->paginate($per_page);
         $deceased_list->transform(function ($item, $key) {
-            $item->creator = $item->user;
-            $item->creator->user_id = $item->creator->id;
-            return $item;
-        });
-
-        // moving unset to another transform round to avoid unsetting any required objects
-        $deceased_list->transform(function ($item, $key) {
+            // these are my requests, i don't need to know creator info!
             unset($item->user_id);
-            unset($item->user);
-            unset($item->creator->id);
             return $item;
         });
 

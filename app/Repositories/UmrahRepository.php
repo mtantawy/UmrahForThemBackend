@@ -28,8 +28,7 @@ class UmrahRepository
 
     public function getMyRequests()
     {
-        return Deceased::orderBy($sort_by, $sort)
-                ->where('user_id', \Authorizer::getResourceOwnerId())
+        return Deceased::where('user_id', \Authorizer::getResourceOwnerId())
                 ->with('umrahs');
     }
 }
