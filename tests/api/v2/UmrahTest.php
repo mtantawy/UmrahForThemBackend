@@ -119,4 +119,19 @@ class UmrahTest extends TestCase
         $this->seeJson(['id' => $deceased_no_umrah->toArray()['id']]);
         $this->dontSeeJson(['id' => $deceased_with_umrah->toArray()['id']]);
     }
+
+    /**
+     * @test
+     * test getting requests (deceased/umrahs) requested by the authenticated user
+     * @method can_get_my_requests
+     * @return [void]
+     */
+    public function can_get_my_requests()
+    {
+        // create deceased by user A
+        // create deceased by user B
+        // make a call while authenticated as user A
+        // see only deceased added by user A
+        // don't see deceased added by user B
+    }
 }
