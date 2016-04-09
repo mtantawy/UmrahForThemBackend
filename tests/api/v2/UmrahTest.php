@@ -119,4 +119,31 @@ class UmrahTest extends TestCase
         $this->seeJson(['id' => $deceased_no_umrah->toArray()['id']]);
         $this->dontSeeJson(['id' => $deceased_with_umrah->toArray()['id']]);
     }
+
+    /**
+     * @test
+     * test getting requests (deceased/umrahs) requested by the authenticated user
+     * @method can_get_my_requests
+     * @return [void]
+     */
+    public function can_get_my_requests()
+    {
+        extract($this->create_user_and_get_access_token());
+        // create deceased by user A
+        $deceased_user_a = factory(App\Deceased::class)->create(['user_id'  =>  $created_user_id]);
+        // create deceased by user B
+        $deceased_user_b = factory(App\Deceased::class)->create();
+        // make a call while authenticated as user A
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/myrequests', [], [], [], $headers);
+        $this->assertResponseOk($response);
+
+        // checking on id because any other faked data can be repeated
+        // see only deceased added by user A
+        // don't see deceased added by user B
+        $this->seeJson(['id' => $deceased_user_a->toArray()['id']]);
+        $this->dontSeeJson(['id' => $deceased_user_b->toArray()['id']]);
+    }
 }

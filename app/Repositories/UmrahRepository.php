@@ -25,4 +25,10 @@ class UmrahRepository
                 ->whereNull('umrahs.created_at')
                 ->with('user');
     }
+
+    public function getMyRequests()
+    {
+        return Deceased::where('user_id', \Authorizer::getResourceOwnerId())
+                ->with('umrahs');
+    }
 }
