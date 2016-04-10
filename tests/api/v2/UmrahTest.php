@@ -12,6 +12,8 @@ class UmrahTest extends TestCase
     use DatabaseTransactions;
 
     private $faker;
+    private $access_token;
+    private $created_user_id;
 
     public function setUp()
     {
@@ -19,6 +21,11 @@ class UmrahTest extends TestCase
 
         $this->faker = Faker::create();
         $faker = $this->faker;
+
+        // adding a deceased creating a deceased and a umrah
+        extract($this->create_user_and_get_access_token());
+        $this->access_token = $access_token;
+        $this->created_user_id = $created_user_id;
     }
 
     /**
@@ -29,9 +36,6 @@ class UmrahTest extends TestCase
      */
     public function can_add_deceased()
     {
-        // adding a deceased creating a deceased and a umrah
-        extract($this->create_user_and_get_access_token());
-
         $parameters = [
             'name'      =>  $this->faker->name,
             'sex'       =>  $this->faker->boolean(50) ? 'male' : 'female',
@@ -40,10 +44,10 @@ class UmrahTest extends TestCase
             'city'      =>  $this->faker->city,
             'death_cause'   =>  $this->faker->text,
             'death_date'    =>  $this->faker->date('Y-m-d', 'now'),
-            'user_id'   =>  $created_user_id,
+            'user_id'   =>  $this->created_user_id,
         ];
         $headers = $this->transformHeadersToServerVars([
-                'Authorization'  =>  'Bearer '.$access_token,
+                'Authorization'  =>  'Bearer '.$this->access_token,
             ]);
         $response = $this->call('POST', '/api/v2/umrah/', $parameters, [], [], $headers);
         $this->assertResponseOk($response);
@@ -107,10 +111,8 @@ class UmrahTest extends TestCase
         $deceased_with_umrah = factory(App\Deceased::class)->create();
         $deceased_with_umrah->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make());
 
-        extract($this->create_user_and_get_access_token());
-
         $headers = $this->transformHeadersToServerVars([
-                'Authorization'  =>  'Bearer '.$access_token,
+                'Authorization'  =>  'Bearer '.$this->access_token,
             ]);
         $response = $this->call('GET', '/api/v2/umrah/', [], [], [], $headers);
         $this->assertResponseOk($response);
@@ -128,14 +130,13 @@ class UmrahTest extends TestCase
      */
     public function can_get_my_requests()
     {
-        extract($this->create_user_and_get_access_token());
         // create deceased by user A
-        $deceased_user_a = factory(App\Deceased::class)->create(['user_id'  =>  $created_user_id]);
+        $deceased_user_a = factory(App\Deceased::class)->create(['user_id'  =>  $this->created_user_id]);
         // create deceased by user B
         $deceased_user_b = factory(App\Deceased::class)->create();
         // make a call while authenticated as user A
         $headers = $this->transformHeadersToServerVars([
-                'Authorization'  =>  'Bearer '.$access_token,
+                'Authorization'  =>  'Bearer '.$this->access_token,
             ]);
         $response = $this->call('GET', '/api/v2/umrah/myrequests', [], [], [], $headers);
         $this->assertResponseOk($response);
