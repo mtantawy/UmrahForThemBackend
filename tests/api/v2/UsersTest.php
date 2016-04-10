@@ -19,6 +19,7 @@ class UsersTest extends TestCase
 
         $this->faker = Faker::create();
         $faker = $this->faker;
+        $this->client_id = $this->faker->randomNumber;
     }
 
     /**
@@ -57,7 +58,7 @@ class UsersTest extends TestCase
     {
         \DB::table('oauth_clients')->insert(
             [
-                'id'        => 1,
+                'id'        =>  $this->client_id,
                 'secret'    =>  'secret',
                 'name'      =>  'client_name',
             ]
@@ -74,7 +75,7 @@ class UsersTest extends TestCase
         // try to login user
         $login_agrs = [
             'grant_type'    =>  'password',
-            'client_id'     =>  1,
+            'client_id'     =>  $this->client_id,
             'client_secret' =>  'secret',
             'username'      =>  $user['email'],
             'password'      =>  $password,
@@ -97,7 +98,7 @@ class UsersTest extends TestCase
     {
         \DB::table('oauth_clients')->insert(
             [
-                'id'        =>  2,
+                'id'        =>  $this->client_id,
                 'secret'    =>  'secret',
                 'name'      =>  'client_name',
             ]
@@ -114,7 +115,7 @@ class UsersTest extends TestCase
         // try to login user
         $login_agrs = [
             'grant_type'    =>  'password',
-            'client_id'     =>  2,
+            'client_id'     =>  $this->client_id,
             'client_secret' =>  'secret',
             'username'      =>  $user['email'],
             'password'      =>  $password,
