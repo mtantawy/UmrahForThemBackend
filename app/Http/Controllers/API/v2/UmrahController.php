@@ -129,7 +129,11 @@ class UmrahController extends Controller
     public function show(Request $request, $id)
     {
         $deceased  = $this->umrah->getDeceased($id);
-        
+        return $this->prepareDeceased($deceased);
+    }
+
+    private function prepareDeceased($deceased)
+    {
         // prepare creator info
         $deceased->creator = $deceased->user;
         $deceased->creator->user_id = $deceased->creator->id;
@@ -151,7 +155,6 @@ class UmrahController extends Controller
             return $item;
         });
 
-
         return $deceased;
     }
 
@@ -167,14 +170,16 @@ class UmrahController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function updateStatus(Request $request, $deceased, $status)
     {
-        //
+        $result = $this->umrah->updateStatus($deceased, $status);
+        if ($result instanceof \App\Deceased) {
+            return $this->prepareDeceased($result);
+        } else {
+            // an error occurred, ust return error msg
+            return response()->json([
+                'error_message'    =>  $result
+            ]);
+        }
     }
 }

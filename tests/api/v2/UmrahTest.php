@@ -196,12 +196,36 @@ class UmrahTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     * test starting an umrah for a deceased
+     * @method can_start_umrah
+     * @return [void]
+     */
     public function can_start_umrah()
     {
         // add deceased by random user
+        $deceased = factory(App\Deceased::class)->create();
         // create umrah for this deceased and authenticated user, note umrah id
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('PATCH', '/api/v2/umrah/'.$deceased->id.'/updatestatus/1', [], [], [], $headers);
+        $this->assertResponseOk($response);
+
+        $umrah = json_decode($response->getContent(), true)['umrahs'][0];
         // get this deceased info
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
+        $this->assertResponseOk($response);
         // check for umrah id & optionally (deceased id + user id)
+        $this->seeJson([
+            'umrahs'    =>  [
+                $umrah
+            ],
+        ]);
     }
 
     public function can_update_umrah_status_to_done()
