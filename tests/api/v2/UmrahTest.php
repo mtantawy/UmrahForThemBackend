@@ -214,6 +214,8 @@ class UmrahTest extends TestCase
         $this->assertResponseOk($response);
 
         $umrah = json_decode($response->getContent(), true)['umrahs'][0];
+        // testing if umrah status id is 1
+        $this->assertEquals(1, $umrah['umrah_status']['id']);
         // get this deceased info
         $headers = $this->transformHeadersToServerVars([
                 'Authorization'  =>  'Bearer '.$this->access_token,
@@ -228,20 +230,78 @@ class UmrahTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     * test changing umrah status to done, id 2
+     * @method can_update_umrah_status_to_done
+     * @return [void]
+     */
     public function can_update_umrah_status_to_done()
     {
         // add deceased by random user
-        // start umrah for that deceased by authenticated user
-        // change umrah status to done
-        // get deceased details and check for umrah status
+        $deceased = factory(App\Deceased::class)->create();
+        // create umrah for this deceased
+        $deceased->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make(['user_id' => $this->created_user_id]));
+
+        // update umrah status for this deceased and authenticated user, note umrah id
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('PATCH', '/api/v2/umrah/'.$deceased->id.'/updatestatus/2', [], [], [], $headers);
+        $this->assertResponseOk($response);
+
+        $umrah = json_decode($response->getContent(), true)['umrahs'][0];
+        // testing if umrah status id is 2
+        $this->assertEquals(2, $umrah['umrah_status']['id']);
+        // get this deceased info
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
+        $this->assertResponseOk($response);
+        // check for umrah id & optionally (deceased id + user id)
+        $this->seeJson([
+            'umrahs'    =>  [
+                $umrah
+            ],
+        ]);
     }
 
+    /**
+     * @test
+     * test changing umrah status to in progress, id 1
+     * @method can_update_umrah_status_to_in_progress
+     * @return [void]
+     */
     public function can_update_umrah_status_to_in_progress()
     {
         // add deceased by random user
-        // start umrah for that deceased by authenticated user
-        // change umrah status to in progress
-        // get deceased details and check for umrah status
+        $deceased = factory(App\Deceased::class)->create();
+        // create umrah for this deceased
+        $deceased->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make(['user_id' => $this->created_user_id]));
+
+        // update umrah status for this deceased and authenticated user, note umrah id
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('PATCH', '/api/v2/umrah/'.$deceased->id.'/updatestatus/1', [], [], [], $headers);
+        $this->assertResponseOk($response);
+
+        $umrah = json_decode($response->getContent(), true)['umrahs'][0];
+        // testing if umrah status id is 1
+        $this->assertEquals(1, $umrah['umrah_status']['id']);
+        // get this deceased info
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
+        $this->assertResponseOk($response);
+        // check for umrah id & optionally (deceased id + user id)
+        $this->seeJson([
+            'umrahs'    =>  [
+                $umrah
+            ],
+        ]);
     }
 
     public function can_edit_deceased_details()
