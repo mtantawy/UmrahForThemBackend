@@ -139,4 +139,63 @@ class UsersTest extends TestCase
             'email' =>  $user['email'],
         ]);
     }
+
+    private function create_user_and_get_access_token()
+    {
+        $client_data = [
+            'id'    =>  $this->faker->randomNumber,
+            'secret'    =>  'secret',
+            'name'  =>  'client_name'
+        ];
+        \DB::table('oauth_clients')->insert($client_data);
+
+        // create user in DB
+        $password = bcrypt(str_random(10));
+        $user = [
+            'name'  =>  $this->faker->name,
+            'email' =>  $this->faker->email,
+            'password'  =>  bcrypt($password)
+        ];
+        $created_user = User::Create($user);
+        // try to login user
+        $login_agrs = [
+            'grant_type'    =>  'password',
+            'client_id'     =>  $client_data['id'],
+            'client_secret' =>  'secret',
+            'username'      =>  $user['email'],
+            'password'      =>  $password,
+        ];
+        $response = $this->call('POST', '/api/v2/login', $login_agrs);
+        $this->assertResponseOk($response);
+
+        $access_token = $response->getData()->access_token;
+
+        return [
+            'access_token'  =>  $access_token,
+            'created_user_id'   =>  $created_user->id,
+        ];
+    }
+
+    public function can_edit_user_profile()
+    {
+        // register a user
+        extract($this->create_user_and_get_access_token());
+        // edit user details
+        $parameters = [
+            'name'      =>  $this->faker->name,
+            'email'     =>  $this->faker->email,
+        ];
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$access_token,
+            ]);
+        $response = $this->call('POST', '/api/v2/users/me', $parameters, [], [], $headers);
+        $this->assertResponseOk($response);
+        // check for updated values in return
+        $this->seeJson(
+            array_merge(
+                $parameters,
+                ['id' => $created_user_id]
+            )
+        );
+    }
 }
