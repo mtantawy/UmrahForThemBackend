@@ -51,28 +51,18 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        if ($id != \Auth::User()->id) {
-            return Response::json('You are not authorized to edit this resource.', 401);
-        }
+        $id = \Authorizer::getResourceOwnerId();
+
         $profile = $request->only(['name', 'email']);
         if ($request->has('password') && !empty($request->input('password'))) {
             $profile = array_merge($profile, ['password' => bcrypt($request->input('password'))]);
         }
-        return Response::json(User::findOrFail($id)
-                ->update($profile));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $user = User::findOrFail($id);
-        return Response::json($user->delete());
+        if (User::findOrFail($id)->update($profile)) {
+            return Response::json(User::find($id));
+        } else {
+            abort(500);
+        }
     }
 }
