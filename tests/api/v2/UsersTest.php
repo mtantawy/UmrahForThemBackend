@@ -176,6 +176,12 @@ class UsersTest extends TestCase
         ];
     }
 
+    /**
+     * @test
+     * Test ability to change user info like name and email
+     * @method can_edit_user_profile
+     * @return [void]
+     */
     public function can_edit_user_profile()
     {
         // register a user
@@ -185,10 +191,11 @@ class UsersTest extends TestCase
             'name'      =>  $this->faker->name,
             'email'     =>  $this->faker->email,
         ];
+        // var_dump($parameters);
         $headers = $this->transformHeadersToServerVars([
                 'Authorization'  =>  'Bearer '.$access_token,
             ]);
-        $response = $this->call('POST', '/api/v2/users/me', $parameters, [], [], $headers);
+        $response = $this->call('PATCH', '/api/v2/users/me', $parameters, [], [], $headers);
         $this->assertResponseOk($response);
         // check for updated values in return
         $this->seeJson(
