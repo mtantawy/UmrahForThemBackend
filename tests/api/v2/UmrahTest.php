@@ -147,4 +147,44 @@ class UmrahTest extends TestCase
         $this->seeJson(['id' => $deceased_user_a->toArray()['id']]);
         $this->dontSeeJson(['id' => $deceased_user_b->toArray()['id']]);
     }
+
+    public function can_get_deceased_details_with_umrah()
+    {
+        // add deceased by random user
+        // create umrah for this deceased
+        // get deceased details
+        // check for deceased details and umrah details
+    }
+
+    public function can_start_umrah()
+    {
+        // add deceased by random user
+        // create umrah for this deceased and authenticated user, note umrah id
+        // get this deceased info
+        // check for umrah id & optionally (deceased id + user id)
+    }
+
+    public function can_update_umrah_status_to_done()
+    {
+        // add deceased by random user
+        // start umrah for that deceased by authenticated user
+        // change umrah status to done
+        // get deceased details and check for umrah status
+    }
+
+    public function can_update_umrah_status_to_in_progress()
+    {
+        // add deceased by random user
+        // start umrah for that deceased by authenticated user
+        // change umrah status to in progress
+        // get deceased details and check for umrah status
+    }
+
+    public function can_edit_deceased_details()
+    {
+        // add deceased by authenticated user
+        // edit deceased details
+        // get deceased details
+        // check for new deceased details
+    }
 }
