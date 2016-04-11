@@ -148,12 +148,52 @@ class UmrahTest extends TestCase
         $this->dontSeeJson(['id' => $deceased_user_b->toArray()['id']]);
     }
 
+    /**
+     * @test
+     * test getting all deceased info correctly
+     * @method can_get_deceased_details_with_umrah
+     * @return [void]
+     */
     public function can_get_deceased_details_with_umrah()
     {
         // add deceased by random user
+        $deceased = factory(App\Deceased::class)->create();
         // create umrah for this deceased
+        $deceased->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make());
         // get deceased details
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
+        $this->assertResponseOk($response);
         // check for deceased details and umrah details
+        $this->seeJson([
+            'id'    =>  $deceased->id,
+            'creator'   =>  [
+                'user_id'   =>  $deceased->user->id,
+                'name'      =>  $deceased->user->name,
+                'email'     =>  $deceased->user->email,
+            ],
+            'umrahs'    =>  [
+                [
+                    'id'    =>  $deceased->umrahs()->first()->id,
+                    'created_at'    =>  $deceased->umrahs()->first()->created_at->toDateTimeString(),
+                    'updated_at'    =>  $deceased->umrahs()->first()->updated_at->toDateTimeString(),
+                    'performer'     =>  [
+                        'id'    =>  $deceased->umrahs()->first()->user->id,
+                        'name'  =>  $deceased->umrahs()->first()->user->name,
+                        'email' =>  $deceased->umrahs()->first()->user->email,
+                    ],
+                    'umrah_status'  =>  [
+                        'id'    =>  $deceased->umrahs()->first()->umrahStatus->id,
+                        'status'    =>  $deceased->umrahs()->first()->umrahStatus->status,
+                        'created_at'    =>  $deceased->umrahs()->first()->umrahStatus->created_at->toDateTimeString(),
+                        'updated_at'    =>  $deceased->umrahs()->first()->umrahStatus->updated_at->toDateTimeString(),
+                    ],
+
+                ]
+            ],
+        ]);
     }
 
     public function can_start_umrah()

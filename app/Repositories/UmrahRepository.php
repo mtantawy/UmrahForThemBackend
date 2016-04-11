@@ -31,4 +31,10 @@ class UmrahRepository
         return Deceased::where('user_id', \Authorizer::getResourceOwnerId())
                 ->with('umrahs');
     }
+
+    public function getDeceased($id)
+    {
+        $deceased = Deceased::findOrFail($id);
+        return $deceased->load('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
+    }
 }

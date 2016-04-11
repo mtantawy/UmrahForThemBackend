@@ -126,9 +126,33 @@ class UmrahController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        $deceased  = $this->umrah->getDeceased($id);
+        
+        // prepare creator info
+        $deceased->creator = $deceased->user;
+        $deceased->creator->user_id = $deceased->creator->id;
+        unset($deceased->user);
+        unset($deceased->user_id);
+        unset($deceased->creator->id);
+
+        // prepare umrah info
+        $deceased->umrahs->transform(function ($item, $key) {
+            $item->performer = $item->user;
+            return $item;
+        });
+        // unset()
+        $deceased->umrahs->transform(function ($item, $key) {
+            unset($item->deceased_id);
+            unset($item->umrah_status_id);
+            unset($item->user_id);
+            unset($item->user);
+            return $item;
+        });
+
+
+        return $deceased;
     }
 
     /**
