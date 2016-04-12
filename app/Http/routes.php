@@ -34,6 +34,25 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('deceased', ['uses' => 'DeceasedController@index']);
     });
 
+    Route::group(['prefix' => 'v2', 'namespace' => 'API\v2'], function () {
+        Route::post('register', 'UserController@store');
+        Route::post('login', function () {
+            return Response::json(Authorizer::issueAccessToken());
+        });
+
+        Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
+            Route::get('/', function () {
+                return 'API v2!';
+            });
+            Route::get('users/me', 'UserController@show');
+            Route::patch('users/me', 'UserController@update');
+            // these have to be above the "resource" controller thingy to match requests first.
+            Route::get('umrah/myrequests', ['as' => 'user.umrah.myrequests', 'uses' => 'UmrahController@myRequests']);
+            Route::patch('umrah/{deceased}/updatestatus/{status}', ['as' => 'deceased.umrah.update', 'uses' => 'UmrahController@updateStatus']);
+            Route::resource('umrah', 'UmrahController', ['except'   =>  ['create', 'edit', 'delete']]);
+        });
+    });
+
     Route::get('/', function () {
         return 'API Home!';
     });

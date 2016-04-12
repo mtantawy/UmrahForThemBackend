@@ -32,6 +32,7 @@ install:
 before_script:
     - mysql -e 'create database umrahforthem;'
     - php artisan migrate
+    - php artisan db:seed --class UmrahStatusesTableSeeder
 
 script:
     - vendor/bin/phpunit

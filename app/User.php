@@ -14,6 +14,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable, Authorizable, CanResetPassword;
 
+    protected $casts = [
+        'id' => 'integer',
+    ];
+
     /**
      * The database table used by the model.
      *
@@ -33,7 +37,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at'];
 
     public function deceased()
     {
