@@ -77,11 +77,11 @@ class UmrahRepository
 
             case 3:
                 # 3 => 'cancelled', delete umrah
-                return Response::json(Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', \Authorizer::getResourceOwnerId())->first()->delete());
+                return Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', \Authorizer::getResourceOwnerId())->first()->delete();
                 break;
 
             default:
-                return Response::json(false);
+                return 'An Error Occurred, please try again later.';
                 break;
         }
 

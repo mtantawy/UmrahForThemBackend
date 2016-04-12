@@ -304,6 +304,42 @@ class UmrahTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     * test changing umrah status to cancelled, removing it completely
+     * @method can_update_umrah_status_to_cancelled_and_removing_it
+     * @return [void]
+     */
+    public function can_update_umrah_status_to_cancelled_and_removing_it()
+    {
+        // add deceased by random user
+        $deceased = factory(App\Deceased::class)->create();
+        // create umrah for this deceased
+        $deceased->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make(['user_id' => $this->created_user_id]));
+
+        // update umrah status for this deceased and authenticated user, note umrah id
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('PATCH', '/api/v2/umrah/'.$deceased->id.'/updatestatus/3', [], [], [], $headers);
+        $this->assertResponseOk($response);
+
+        $response_content = json_decode($response->getContent(), true);
+        // check if message exists and is as expected.
+        $this->assertTrue(isset($response_content['message']));
+        $this->assertEquals('Umrah Cancelled Successfully', $response_content['message']);
+        // get this deceased info
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
+        $this->assertResponseOk($response);
+        // check for umrah id & optionally (deceased id + user id)
+        $this->seeJson([
+            'umrahs'    =>  [],
+        ]);
+    }
+
     public function can_edit_deceased_details()
     {
         // add deceased by authenticated user
