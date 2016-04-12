@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Umrah;
+use App\Deceased;
 use App\Policies\UmrahPolicy;
+use App\Policies\DeceasedPolicy;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -17,7 +19,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
-        Umrah::class    =>  UmrahPolicy::class
+        Umrah::class    =>  UmrahPolicy::class,
+        Deceased::class =>  DeceasedPolicy::class
     ];
 
     /**

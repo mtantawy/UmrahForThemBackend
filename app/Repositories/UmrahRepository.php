@@ -81,10 +81,20 @@ class UmrahRepository
                 break;
 
             default:
-                return 'An Error Occurred, please try again later.';
+                return 'An Error Occurred, please try again.';
                 break;
         }
 
         return $this->getDeceased($deceased_id);
+    }
+
+    public function updateDeceased($deceased_id, $data)
+    {
+        $deceased = Deceased::findOrFail($deceased_id);
+        if ($deceased->update($data)) {
+            return $deceased;
+        } else {
+            return 'An Error Occurred, please try again.';
+        }
     }
 }

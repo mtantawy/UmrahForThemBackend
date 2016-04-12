@@ -217,9 +217,6 @@ class UmrahTest extends TestCase
         // testing if umrah status id is 1
         $this->assertEquals(1, $umrah['umrah_status']['id']);
         // get this deceased info
-        $headers = $this->transformHeadersToServerVars([
-                'Authorization'  =>  'Bearer '.$this->access_token,
-            ]);
         $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
         $this->assertResponseOk($response);
         // check for umrah id & optionally (deceased id + user id)
@@ -254,9 +251,6 @@ class UmrahTest extends TestCase
         // testing if umrah status id is 2
         $this->assertEquals(2, $umrah['umrah_status']['id']);
         // get this deceased info
-        $headers = $this->transformHeadersToServerVars([
-                'Authorization'  =>  'Bearer '.$this->access_token,
-            ]);
         $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
         $this->assertResponseOk($response);
         // check for umrah id & optionally (deceased id + user id)
@@ -291,9 +285,6 @@ class UmrahTest extends TestCase
         // testing if umrah status id is 1
         $this->assertEquals(1, $umrah['umrah_status']['id']);
         // get this deceased info
-        $headers = $this->transformHeadersToServerVars([
-                'Authorization'  =>  'Bearer '.$this->access_token,
-            ]);
         $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
         $this->assertResponseOk($response);
         // check for umrah id & optionally (deceased id + user id)
@@ -329,9 +320,6 @@ class UmrahTest extends TestCase
         $this->assertTrue(isset($response_content['message']));
         $this->assertEquals('Umrah Cancelled Successfully', $response_content['message']);
         // get this deceased info
-        $headers = $this->transformHeadersToServerVars([
-                'Authorization'  =>  'Bearer '.$this->access_token,
-            ]);
         $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
         $this->assertResponseOk($response);
         // check for umrah id & optionally (deceased id + user id)
@@ -340,11 +328,55 @@ class UmrahTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     * test ability to edit deceased details
+     * @method can_edit_deceased_details
+     * @return [void]
+     */
     public function can_edit_deceased_details()
     {
         // add deceased by authenticated user
+        $deceased = factory(App\Deceased::class)->create(['user_id' => $this->created_user_id]);
         // edit deceased details
-        // get deceased details
+        $parameters = factory(App\Deceased::class)->make(['user_id' => $this->created_user_id])->toArray();
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('PATCH', '/api/v2/umrah/'.$deceased->id, $parameters, [], [], $headers);
+        $this->assertResponseOk($response);
         // check for new deceased details
+        $this->seeJson($parameters);
+
+        // get deceased details
+        $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
+        $this->assertResponseOk($response);
+        // check for new deceased details
+        $this->seeJson($parameters);
+    }
+
+    /**
+     * @test
+     * test forbidding a user from edting details of deceased not owned by him
+     * @method can_not_edit_deceased_not_owned_by_me
+     * @return [void]
+     */
+    public function can_not_edit_deceased_not_owned_by_me()
+    {
+        // add deceased by random user
+        $deceased = factory(App\Deceased::class)->create();
+        // edit deceased details
+        $parameters = factory(App\Deceased::class)->make(['user_id' => $deceased->user_id])->toArray();
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('PATCH', '/api/v2/umrah/'.$deceased->id, $parameters, [], [], $headers);
+        $this->assertResponseStatus(403); //forbidden
+
+        // get deceased details
+        $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
+        $this->assertResponseOk($response);
+        // check for deceased details, should be unchanged
+        $this->seeJson($deceased->toArray());
     }
 }

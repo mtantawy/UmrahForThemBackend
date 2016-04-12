@@ -167,7 +167,19 @@ class UmrahController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        \Auth::loginUsingId(\Authorizer::getResourceOwnerId());
+        $this->authorize('update', $this->umrah->getDeceased($id));
+
+        $data = $request->only(['name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date']);
+        $result = $this->umrah->updateDeceased($id, $data);
+        if ($result instanceof \App\Deceased) {
+            return $this->prepareDeceased($result);
+        } else {
+            // an error occurred, ust return error msg
+            return response()->json([
+                'error_message'    =>  $result
+            ]);
+        }
     }
 
     public function updateStatus(Request $request, $deceased, $status)
