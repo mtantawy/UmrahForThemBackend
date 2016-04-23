@@ -12,6 +12,11 @@ class UmrahStatus extends Model
         'id'                =>  'integer',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
+
     public function umrahs()
     {
         return $this->hasMany('App\Umrah');
