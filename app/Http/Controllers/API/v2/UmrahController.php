@@ -152,6 +152,8 @@ class UmrahController extends Controller
             unset($item->umrah_status_id);
             unset($item->user_id);
             unset($item->user);
+            unset($item->umrah_status->created_at);
+            unset($item->umrah_status->updated_at);
             return $item;
         });
 
