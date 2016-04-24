@@ -187,8 +187,6 @@ class UmrahTest extends TestCase
                     'umrah_status'  =>  [
                         'id'    =>  $deceased->umrahs()->first()->umrahStatus->id,
                         'status'    =>  $deceased->umrahs()->first()->umrahStatus->status,
-                        'created_at'    =>  $deceased->umrahs()->first()->umrahStatus->created_at->toDateTimeString(),
-                        'updated_at'    =>  $deceased->umrahs()->first()->umrahStatus->updated_at->toDateTimeString(),
                     ],
 
                 ]
