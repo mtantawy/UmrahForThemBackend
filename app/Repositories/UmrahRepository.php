@@ -97,4 +97,12 @@ class UmrahRepository
             return 'An Error Occurred, please try again.';
         }
     }
+
+    public function getUmrahsPerformedByMe()
+    {
+        return Deceased::select('deceased.*')
+                ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
+                ->where('umrahs.user_id', \Authorizer::getResourceOwnerId())
+                ->with('user', 'umrahs', 'umrahs.umrahStatus');
+    }
 }
