@@ -65,7 +65,7 @@ class UmrahTest extends TestCase
     private function create_user_and_get_access_token()
     {
         $client_data = [
-            'id'    =>  $this->faker->randomNumber,
+            'id'    =>  $this->faker->randomNumber(5),
             'secret'    =>  'secret',
             'name'  =>  'client_name'
         ];
