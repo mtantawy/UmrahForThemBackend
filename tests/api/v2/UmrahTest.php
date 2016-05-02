@@ -377,4 +377,31 @@ class UmrahTest extends TestCase
         // check for deceased details, should be unchanged
         $this->seeJson($deceased->toArray());
     }
+
+    /**
+     * @test
+     * test ability to get list of umrahs performed by the user
+     * @method can_get_umrahs_performed_by_me
+     * @return [void]
+     */
+    public function can_get_umrahs_performed_by_me()
+    {
+        // create 2 deceaseds
+        $deceased_a = factory(App\Deceased::class)->create();
+        $deceased_b = factory(App\Deceased::class)->create();
+        // make umrah for one deceased by random user
+        $deceased_a->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make());
+        // make umrah for the other deceased by logged in user
+        $deceased_b->umrahs()->save(factory(App\Umrah::class, 'umrah_no_deceased_id')->make(['user_id'  =>  $this->created_user_id]));
+        // request list of umrahs performed by me
+        $headers = $this->transformHeadersToServerVars([
+                'Authorization'  =>  'Bearer '.$this->access_token,
+            ]);
+        $response = $this->call('GET', '/api/v2/umrah/performedbyme', [], [], [], $headers);
+        $this->assertResponseOk($response);
+        // see the correct umrah
+        $this->seeJson(['id' => $deceased_b->toArray()['id']]);
+        // don't see the other umrah
+        $this->dontSeeJson(['id' => $deceased_a->toArray()['id']]);
+    }
 }
