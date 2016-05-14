@@ -52,6 +52,9 @@ Route::group(['prefix' => 'api'], function () {
             Route::patch('umrah/{deceased}/updatestatus/{status}', ['as' => 'deceased.umrah.update', 'uses' => 'UmrahController@updateStatus']);
             Route::resource('umrah', 'UmrahController', ['except'   =>  ['create', 'edit', 'destroy']]);
         });
+
+        // allow guest mode to view deceased with no umrahs
+        Route::get('umrah', ['uses' => 'UmrahController@index']);
     });
 
     Route::get('/', function () {
