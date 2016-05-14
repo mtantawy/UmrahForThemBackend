@@ -12,7 +12,7 @@ class AddFieldsToUserProfileUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('user', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->enum('sex', ['male', 'female']);
             $table->date('date_of_birth');
             $table->string('country'); // that should better be a dropdown thingy
@@ -27,7 +27,7 @@ class AddFieldsToUserProfileUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('user', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('sex');
             $table->dropColumn('date_of_birth');
             $table->dropColumn('country');
