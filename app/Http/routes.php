@@ -40,6 +40,9 @@ Route::group(['prefix' => 'api'], function () {
             return Response::json(Authorizer::issueAccessToken());
         });
 
+        // allow guest mode to view deceased with no umrahs
+        Route::get('umrah/{id}', ['uses' => 'UmrahController@show']);
+
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
             Route::get('/', function () {
                 return 'API v2!';
@@ -52,6 +55,9 @@ Route::group(['prefix' => 'api'], function () {
             Route::patch('umrah/{deceased}/updatestatus/{status}', ['as' => 'deceased.umrah.update', 'uses' => 'UmrahController@updateStatus']);
             Route::resource('umrah', 'UmrahController', ['except'   =>  ['create', 'edit', 'destroy']]);
         });
+
+        // allow guest mode to view deceased with no umrahs
+        Route::get('umrah', ['uses' => 'UmrahController@index']);
     });
 
     Route::get('/', function () {
