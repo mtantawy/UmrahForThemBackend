@@ -21,7 +21,7 @@ class UserController extends Controller
     {
         return User::Create(
             array_merge(
-                $request->only(['name', 'email']),
+                $request->only(['name', 'email', 'sex', 'date_of_birth', 'country', 'city']),
                 [
                     'password' => bcrypt($request->input('password')),
                     'remember_token' => str_random(10),
@@ -55,9 +55,15 @@ class UserController extends Controller
     {
         $id = \Authorizer::getResourceOwnerId();
 
-        $profile = $request->only(['name', 'email']);
+        $profile = [];
         if ($request->has('password') && !empty($request->input('password'))) {
             $profile = array_merge($profile, ['password' => bcrypt($request->input('password'))]);
+        }
+        if ($request->has('email') && !empty($request->input('email'))) {
+            $profile = array_merge(
+                $profile,
+                $request->only(['name', 'email', 'sex', 'date_of_birth', 'country', 'city'])
+            );
         }
         if (User::findOrFail($id)->update($profile)) {
             return Response::json(User::find($id));

@@ -23,13 +23,13 @@ class UmrahRepository
         return Deceased::select('deceased.*')
                 ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
                 ->whereNull('umrahs.created_at')
-                ->with('user');
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
     }
 
     public function getMyRequests()
     {
         return Deceased::where('user_id', \Authorizer::getResourceOwnerId())
-                ->with('umrahs');
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
     }
 
     public function getDeceased($id)
@@ -103,6 +103,6 @@ class UmrahRepository
         return Deceased::select('deceased.*')
                 ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
                 ->where('umrahs.user_id', \Authorizer::getResourceOwnerId())
-                ->with('user', 'umrahs', 'umrahs.umrahStatus');
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
     }
 }
