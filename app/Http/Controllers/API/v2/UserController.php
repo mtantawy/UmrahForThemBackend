@@ -41,7 +41,12 @@ class UserController extends Controller
         if (is_null($id)) {
             $id = \Authorizer::getResourceOwnerId();
         }
-        return User::findOrFail($id);
+        $user = User::findOrFail($id);
+        $user->umrah_requests_count = $user->getUmrahRequestsCount();
+        $user->in_progress_umrahs_count = $user->getUmrahsCountByStatusID(1);
+        $user->done_umrahs_count = $user->getUmrahsCountByStatusID(2);
+
+        return $user;
     }
 
     /**
