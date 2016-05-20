@@ -40,9 +40,6 @@ Route::group(['prefix' => 'api'], function () {
             return Response::json(Authorizer::issueAccessToken());
         });
 
-        // allow guest mode to view deceased with no umrahs
-        Route::get('umrah/{id}', ['uses' => 'UmrahController@show']);
-
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
             Route::get('/', function () {
                 return 'API v2!';
