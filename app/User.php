@@ -48,4 +48,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->hasMany('App\Umrah');
     }
+
+    public function getUmrahRequestsCount()
+    {
+        return $this->umrahs->count();
+    }
+
+    public function getUmrahsCountByStatusID($umrah_status_id)
+    {
+        return \App\Umrah::where('user_id', $this->id)
+                        ->where('umrah_status_id', $umrah_status_id)
+                        ->count();
+    }
 }
