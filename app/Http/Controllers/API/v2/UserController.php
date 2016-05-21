@@ -76,4 +76,23 @@ class UserController extends Controller
             abort(500);
         }
     }
+
+    public function resetPassword(Request $request)
+    {
+        $email = $request->input('email');
+        $users = User::where('email', $email)->get();
+        if ($users->count()) {
+            $status = $users->first()->resetPassword();
+            if (false === $status) {
+                return response()->json([
+                    'error_message' =>  'An error occurred while trying to sent password reset email.',
+                ], 500);
+            }
+        }
+
+        // in all cases we return response that we sent an email to the address except if we failed to send password reset email
+        return response()->json([
+                'message' =>  'We sent a password reset email to: '.$email,
+            ]);
+    }
 }
