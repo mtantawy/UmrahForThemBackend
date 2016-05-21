@@ -187,6 +187,10 @@ class UmrahTest extends TestCase
                         'id'    =>  $deceased->umrahs()->first()->user->id,
                         'name'  =>  $deceased->umrahs()->first()->user->name,
                         'email' =>  $deceased->umrahs()->first()->user->email,
+                        'city'      =>  $deceased->umrahs()->first()->user->city,
+                        'country'   =>  $deceased->umrahs()->first()->user->country,
+                        'date_of_birth' =>  $deceased->umrahs()->first()->user->date_of_birth,
+                        'sex'      =>  $deceased->umrahs()->first()->user->sex,
                     ],
                     'umrah_status'  =>  [
                         'id'    =>  $deceased->umrahs()->first()->umrahStatus->id,

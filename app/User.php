@@ -60,4 +60,28 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                         ->where('umrah_status_id', $umrah_status_id)
                         ->count();
     }
+
+    public function resetPassword()
+    {
+        $password = str_random(10);
+        $this->password = bcrypt($password);
+
+        try {
+            $this->update();
+
+            \Mail::send('emails.password_reset', ['name' => $this->name, 'password' => $password], function ($message) {
+                $message->to($this->email, $this->name);
+                $message->from('password_reset@umrah4them.com', 'Umrah4Them.com');
+                $message->subject('Password Reset');
+                $message->replyTo('noreply@umrah4them.com', $name = null);
+            });
+            
+        } catch (Exception $e) {
+            \Log::error($e->getMessage());
+            return false;
+        } catch (ClientException $e) {
+            \Log::error($e->getMessage());
+            return false;
+        }
+    }
 }

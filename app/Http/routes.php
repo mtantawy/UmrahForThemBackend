@@ -39,6 +39,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('login', function () {
             return Response::json(Authorizer::issueAccessToken());
         });
+        Route::post('resetpassword', 'UserController@resetPassword');
 
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
             Route::get('/', function () {
