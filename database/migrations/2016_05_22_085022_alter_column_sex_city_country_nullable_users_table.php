@@ -13,9 +13,9 @@ class AlterColumnSexCityCountryNullableUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('sex', ['male', 'female'])->nullable()->change();
-            $table->string('country')->nullable()->change();
-            $table->string('city')->nullable()->change();
+            DB::statement("ALTER TABLE `users` CHANGE `sex` `sex` ENUM( 'male', 'female' ) NULL");
+            DB::statement("ALTER TABLE `users` CHANGE `city` `city` VARCHAR( 255 ) NULL");
+            DB::statement("ALTER TABLE `users` CHANGE `country` `country` VARCHAR( 255 ) NULL");
         });
     }
 
@@ -27,9 +27,9 @@ class AlterColumnSexCityCountryNullableUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('sex', ['male', 'female'])->nullable(false)->change();
-            $table->string('country')->nullable(false)->change();
-            $table->string('city')->nullable(false)->change();
+            DB::statement("ALTER TABLE `users` CHANGE `sex` `sex` ENUM( 'male', 'female' )");
+            DB::statement("ALTER TABLE `users` CHANGE `city` `city` VARCHAR( 255 )");
+            DB::statement("ALTER TABLE `users` CHANGE `country` `country` VARCHAR( 255 )");
         });
     }
 }
