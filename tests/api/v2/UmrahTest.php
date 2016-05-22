@@ -175,7 +175,6 @@ class UmrahTest extends TestCase
                 'email'     =>  $deceased->user->email,
                 'city'      =>  $deceased->user->city,
                 'country'   =>  $deceased->user->country,
-                'date_of_birth' =>  $deceased->user->date_of_birth,
                 'sex'      =>  $deceased->user->sex,
             ],
             'umrahs'    =>  [
@@ -189,7 +188,6 @@ class UmrahTest extends TestCase
                         'email' =>  $deceased->umrahs()->first()->user->email,
                         'city'      =>  $deceased->umrahs()->first()->user->city,
                         'country'   =>  $deceased->umrahs()->first()->user->country,
-                        'date_of_birth' =>  $deceased->umrahs()->first()->user->date_of_birth,
                         'sex'      =>  $deceased->umrahs()->first()->user->sex,
                     ],
                     'umrah_status'  =>  [

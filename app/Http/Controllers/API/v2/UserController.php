@@ -21,7 +21,7 @@ class UserController extends Controller
     {
         return User::Create(
             array_merge(
-                $request->only(['name', 'email', 'sex', 'date_of_birth', 'country', 'city']),
+                $request->only(['name', 'email', 'sex', 'country', 'city']),
                 [
                     'password' => bcrypt($request->input('password')),
                     'remember_token' => str_random(10),
@@ -67,7 +67,7 @@ class UserController extends Controller
         if ($request->has('email') && !empty($request->input('email'))) {
             $profile = array_merge(
                 $profile,
-                $request->only(['name', 'email', 'sex', 'date_of_birth', 'country', 'city'])
+                $request->only(['name', 'email', 'sex', 'country', 'city'])
             );
         }
         if (User::findOrFail($id)->update($profile)) {
