@@ -51,7 +51,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getUmrahRequestsCount()
     {
-        return $this->umrahs->count();
+        return $this->deceased->count();
     }
 
     public function getUmrahsCountByStatusID($umrah_status_id)
