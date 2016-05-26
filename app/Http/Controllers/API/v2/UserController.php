@@ -4,12 +4,12 @@ namespace App\Http\Controllers\API\v2;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\AuthController;
 use Response;
 
 use App\User;
 
-class UserController extends Controller
+class UserController extends AuthController
 {
     /**
      * Store a newly created resource in storage.
@@ -19,15 +19,23 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        return User::Create(
-            array_merge(
-                $request->only(['name', 'email', 'sex', 'country', 'city']),
-                [
-                    'password' => bcrypt($request->input('password')),
-                    'remember_token' => str_random(10),
-                ]
-            )
-        );
+        $validator = $this->validator($request->all());
+
+        if ($validator->fails()) {
+            return response()->json([
+                    'error_message' =>  $validator->messages()
+                ], 400);
+        } else {
+            return User::Create(
+                array_merge(
+                    $request->only(['name', 'email', 'sex', 'country', 'city']),
+                    [
+                        'password' => bcrypt($request->input('password')),
+                        'remember_token' => str_random(10),
+                    ]
+                )
+            );
+        }
     }
 
     /**
