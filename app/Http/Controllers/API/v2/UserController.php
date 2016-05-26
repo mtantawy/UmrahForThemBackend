@@ -4,12 +4,13 @@ namespace App\Http\Controllers\API\v2;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Controller;
 use Response;
+use Validator;
 
 use App\User;
 
-class UserController extends AuthController
+class UserController extends Controller
 {
     /**
      * Store a newly created resource in storage.
@@ -102,5 +103,14 @@ class UserController extends AuthController
         return response()->json([
                 'message' =>  'We sent a password reset email to: '.$email,
             ]);
+    }
+
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required',
+        ]);
     }
 }
