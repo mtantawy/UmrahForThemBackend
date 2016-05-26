@@ -31,8 +31,9 @@ class UsersTest extends TestCase
     public function can_register_a_user()
     {
         $user = factory(App\User::class)->make(); // make not create to only create instances but not save in DB
+        $user_arr = array_merge($user->toArray(), ['password' => bcrypt(str_random(10))]);
         // create user with these values
-        $response = $this->call('POST', '/api/v2/register', $user->toArray());
+        $response = $this->call('POST', '/api/v2/register', $user_arr);
         $this->assertResponseOk($response);
         $this->seeJson([
             'name'  =>  $user->name,
