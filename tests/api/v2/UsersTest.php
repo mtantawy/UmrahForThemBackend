@@ -124,7 +124,7 @@ class UsersTest extends TestCase
         $response = $this->call('POST', '/api/v2/login', $login_agrs);
         $this->assertResponseOk($response);
 
-        $access_token = $response->getData()->access_token;
+        $access_token = $response->getData()->access_token_info->access_token;
 
         // login user using ID
         \Auth::loginUsingId($created_user->id);
@@ -169,7 +169,7 @@ class UsersTest extends TestCase
         $response = $this->call('POST', '/api/v2/login', $login_agrs);
         $this->assertResponseOk($response);
 
-        $access_token = $response->getData()->access_token;
+        $access_token = $response->getData()->access_token_info->access_token;
 
         return [
             'access_token'  =>  $access_token,

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UmrahRepository;
+use LucaDegasperi\OAuth2Server\Exceptions\NoActiveAccessTokenException;
 
 class UmrahController extends Controller
 {
@@ -14,6 +15,11 @@ class UmrahController extends Controller
     public function __construct(UmrahRepository $umrah)
     {
         $this->umrah = $umrah;
+        try {
+            $this->umrah->auth_user_id = \Authorizer::getResourceOwnerId();
+        } catch (NoActiveAccessTokenException $e) {
+            // nothing to be done here, some requests can be done without access_token
+        }
     }
 
     /**
@@ -27,13 +33,12 @@ class UmrahController extends Controller
         $sort_by = $request->has('sort_by') ? $request->input('sort_by') : 'created_at';
         $sort = $request->has('sort') ? $request->input('sort') : 'desc';
 
-        // pagination
-        $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
-
         $deceased_list  = $this->umrah
                                 ->getDeceasedWithNoUmrah()
-                                ->orderBy($sort_by, $sort)
-                                ->paginate($per_page);
+                                ->orderBy($sort_by, $sort);
+
+        $deceased_list = $this->paginateIfNeeded($request, $deceased_list);
+                                
         $deceased_list->transform(function ($item, $key) {
             return $this->prepareDeceased($item);
         });
@@ -52,13 +57,12 @@ class UmrahController extends Controller
         $sort_by = $request->has('sort_by') ? $request->input('sort_by') : 'created_at';
         $sort = $request->has('sort') ? $request->input('sort') : 'desc';
 
-        // pagination
-        $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
-
         $deceased_list  = $this->umrah
                                 ->getMyRequests()
-                                ->orderBy($sort_by, $sort)
-                                ->paginate($per_page);
+                                ->orderBy($sort_by, $sort);
+
+        $deceased_list = $this->paginateIfNeeded($request, $deceased_list);
+
         $deceased_list->transform(function ($item, $key) {
             return $this->prepareDeceased($item);
         });
@@ -85,9 +89,15 @@ class UmrahController extends Controller
            ]);
 
         if ($validator->fails()) {
+            $error_message = collect($validator->messages())->flatten()->reduce(function ($messages, $message) {
+                if (empty($messages)) {
+                    return $message;
+                } else {
+                    return $messages . '، ' . $message;
+                }
+            }, '');
             return response()->json([
-                    'Error' =>  'Bad Request: Validation failed.',
-                    'Error Message' =>  $validator->messages()
+                    'error_message' =>  $error_message
                 ], 400);
         } else {
             $deceased = $this->umrah->storeDeceased(
@@ -193,17 +203,29 @@ class UmrahController extends Controller
         $sort_by = $request->has('sort_by') ? $request->input('sort_by') : 'created_at';
         $sort = $request->has('sort') ? $request->input('sort') : 'desc';
 
-        // pagination
-        $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
-
         $deceased_list  = $this->umrah
                                 ->getUmrahsPerformedByMe()
-                                ->orderBy($sort_by, $sort)
-                                ->paginate($per_page);
+                                ->orderBy($sort_by, $sort);
+
+        $deceased_list = $this->paginateIfNeeded($request, $deceased_list);
+
         $deceased_list->transform(function ($item, $key) {
             return $this->prepareDeceased($item);
         });
 
         return $deceased_list;
+    }
+
+    private function paginateIfNeeded(Request $request, $collection)
+    {
+        if ($request->has('no_pagination') && $request->input('no_pagination')) {
+            // do NOT paginate
+            return $collection->get();
+        } else {
+            // pagination
+            $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
+
+            return $collection->paginate($per_page);
+        }
     }
 }
