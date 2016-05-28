@@ -36,9 +36,7 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::group(['prefix' => 'v2', 'namespace' => 'API\v2'], function () {
         Route::post('register', 'UserController@store');
-        Route::post('login', function () {
-            return Response::json(Authorizer::issueAccessToken());
-        });
+        Route::post('login', 'UserController@login');
         Route::post('resetpassword', 'UserController@resetPassword');
 
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {

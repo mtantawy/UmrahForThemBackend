@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Response;
 use Validator;
+use Authorizer;
 
 use App\User;
 
@@ -111,6 +112,16 @@ class UserController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required',
+        ]);
+    }
+
+    public function login(Request $request)
+    {
+        $access_token_info = Authorizer::issueAccessToken();
+        $user = User::where('email', $request->input('username'))->first();
+        return Response::json([
+            'access_token_info' => $access_token_info,
+            'user_info' =>  $user
         ]);
     }
 }
