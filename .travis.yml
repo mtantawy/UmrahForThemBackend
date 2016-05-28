@@ -16,6 +16,7 @@ env:
       - APP_ENV=testing
       - APP_DEBUG=true
       - APP_KEY=WOZryj3ZBRIEAk5Az05rcnGXEhmIoRUW
+      - MAIL_DRIVER=log
       - DB_HOST=localhost
       - DB_DATABASE=umrahforthem
       - DB_USERNAME=root
