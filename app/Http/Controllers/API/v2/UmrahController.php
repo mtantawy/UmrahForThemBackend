@@ -14,6 +14,7 @@ class UmrahController extends Controller
     public function __construct(UmrahRepository $umrah)
     {
         $this->umrah = $umrah;
+        $this->umrah->auth_user_id = \Authorizer::getResourceOwnerId();
     }
 
     /**
