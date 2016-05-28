@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UmrahRepository;
+use LucaDegasperi\OAuth2Server\Exceptions\NoActiveAccessTokenException;
 
 class UmrahController extends Controller
 {
@@ -14,7 +15,11 @@ class UmrahController extends Controller
     public function __construct(UmrahRepository $umrah)
     {
         $this->umrah = $umrah;
-        $this->umrah->auth_user_id = \Authorizer::getResourceOwnerId();
+        try {
+            $this->umrah->auth_user_id = \Authorizer::getResourceOwnerId();
+        } catch (NoActiveAccessTokenException $e) {
+            // nothing to be done here, some requests can be done without access_token
+        }
     }
 
     /**
