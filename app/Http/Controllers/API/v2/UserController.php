@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Response;
 use Validator;
+use Authorizer;
 
 use App\User;
 
@@ -23,8 +24,15 @@ class UserController extends Controller
         $validator = $this->validator($request->all());
 
         if ($validator->fails()) {
+            $error_message = collect($validator->messages())->flatten()->reduce(function ($messages, $message) {
+                if (empty($messages)) {
+                    return $message;
+                } else {
+                    return $messages . '، ' . $message;
+                }
+            }, '');
             return response()->json([
-                    'error_message' =>  $validator->messages()
+                    'error_message' =>  $error_message
                 ], 400);
         } else {
             return User::Create(
@@ -70,14 +78,8 @@ class UserController extends Controller
         $id = \Authorizer::getResourceOwnerId();
 
         $profile = [];
-        if ($request->has('password') && !empty($request->input('password'))) {
-            $profile = array_merge($profile, ['password' => bcrypt($request->input('password'))]);
-        }
         if ($request->has('email') && !empty($request->input('email'))) {
-            $profile = array_merge(
-                $profile,
-                $request->only(['name', 'email', 'sex', 'country', 'city'])
-            );
+            $profile = $request->only(['name', 'email', 'sex', 'country', 'city']);
         }
         if (User::findOrFail($id)->update($profile)) {
             return Response::json(User::find($id));
@@ -112,5 +114,44 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required',
         ]);
+    }
+
+    public function login(Request $request)
+    {
+        $access_token_info = Authorizer::issueAccessToken();
+        $user = User::where('email', $request->input('username'))->first();
+        return Response::json([
+            'access_token_info' => $access_token_info,
+            'user_info' =>  $user
+        ]);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $id = \Authorizer::getResourceOwnerId();
+
+        $profile = [];
+        if (!empty($request->input('old_password', '')) && !empty($request->input('password', ''))) {
+            // validate old_password first
+            $credentials = [
+                'email' => User::findOrFail($id)->email,
+                'password'  =>  trim($request->input('old_password'))
+            ];
+            if (\Auth::attempt($credentials)) {
+                $profile = [
+                    'password' => bcrypt($request->input('password'))
+                ];
+            } else {
+                return response()->json([
+                        'error_message' =>  'Wrong Password!'
+                    ], 400);
+            }
+        }
+
+        if (User::findOrFail($id)->update($profile)) {
+            return Response::json(User::find($id));
+        } else {
+            abort(500);
+        }
     }
 }

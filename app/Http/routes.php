@@ -36,9 +36,7 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::group(['prefix' => 'v2', 'namespace' => 'API\v2'], function () {
         Route::post('register', 'UserController@store');
-        Route::post('login', function () {
-            return Response::json(Authorizer::issueAccessToken());
-        });
+        Route::post('login', 'UserController@login');
         Route::post('resetpassword', 'UserController@resetPassword');
 
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
@@ -47,6 +45,7 @@ Route::group(['prefix' => 'api'], function () {
             });
             Route::get('users/me', 'UserController@show');
             Route::patch('users/me', 'UserController@update');
+            Route::patch('users/me/updatepassword', 'UserController@updatePassword');
             // these have to be above the "resource" controller thingy to match requests first.
             Route::get('umrah/myrequests', ['as' => 'user.umrah.myrequests', 'uses' => 'UmrahController@myRequests']);
             Route::get('umrah/performedbyme', ['as' => 'user.umrah.performedbyme', 'uses' => 'UmrahController@performedByMe']);
