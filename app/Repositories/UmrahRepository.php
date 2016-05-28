@@ -5,14 +5,17 @@ namespace App\Repositories;
 use App\User;
 use App\Umrah;
 use App\Deceased;
+use Carbon\Carbon;
 
 class UmrahRepository
 {
+    public $auth_user_id;
+
     public function storeDeceased($data)
     {
         $data = array_merge(
             $data,
-            ['user_id' => \Authorizer::getResourceOwnerId()]
+            ['user_id' => $this->auth_user_id]
         );
 
         return Deceased::Create($data);
@@ -28,7 +31,7 @@ class UmrahRepository
 
     public function getMyRequests()
     {
-        return Deceased::where('user_id', \Authorizer::getResourceOwnerId())
+        return Deceased::where('user_id', $this->auth_user_id)
                 ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
     }
 
@@ -47,7 +50,7 @@ class UmrahRepository
                 // first check if there is a umrah with status (done, or in progress) for this deceased then return msg
                 $count_of_umrahs_for_deceased = Deceased::findOrFail($deceased_id)
                                                         ->umrahs()
-                                                        ->where('user_id', '!=', \Authorizer::getResourceOwnerId())
+                                                        ->where('user_id', '!=', $this->auth_user_id)
                                                         ->leftjoin('umrah_statuses', 'umrah_statuses.id', '=', 'umrahs.umrah_status_id')
                                                         ->whereIn('umrah_statuses.id', [1, 2])
                                                         ->count();
@@ -55,15 +58,15 @@ class UmrahRepository
                     return 'There is already an Umrah being performed for this Deceased.';
                 }
                 // if no umrah for this user for this deceased, create one with status in progress
-                if (0 == Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', \Authorizer::getResourceOwnerId())->count()) {
+                if (0 == Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', $this->auth_user_id)->count()) {
                     Deceased::findOrFail($deceased_id)->umrahs()->create([
-                            'user_id' => \Authorizer::getResourceOwnerId(),
+                            'user_id' => $this->auth_user_id,
                             'deceased' => $deceased_id,
                             'umrah_status_id' => 1,
                         ]);
                 } else {
                     // else update the current umrah
-                    $umrah = Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', \Authorizer::getResourceOwnerId())->first();
+                    $umrah = Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', $this->auth_user_id)->first();
                     $umrah->umrah_status_id = 1;
                     $umrah->save();
                 }
@@ -71,14 +74,14 @@ class UmrahRepository
 
             case 2:
                 # 2 => 'Done', just update umrah status of the current logged in user, if exists
-                $umrah = Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', \Authorizer::getResourceOwnerId())->first();
+                $umrah = Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', $this->auth_user_id)->first();
                 $umrah->umrah_status_id = 2;
                 $umrah->save();
                 break;
 
             case 3:
                 # 3 => 'cancelled', delete umrah
-                return Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', \Authorizer::getResourceOwnerId())->first()->delete();
+                return Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', $this->auth_user_id)->first()->delete();
                 break;
 
             default:
@@ -106,7 +109,7 @@ class UmrahRepository
     {
         return Deceased::select('deceased.*')
                 ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
-                ->where('umrahs.user_id', \Authorizer::getResourceOwnerId())
+                ->where('umrahs.user_id', $this->auth_user_id)
                 ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
     }
 
@@ -126,14 +129,47 @@ class UmrahRepository
                 break;
         }
         \Mail::send('emails.umrah_status_update', [
-            'creator_name' => $umrah->user->name,
+            'creator_name' => $umrah->deceased->user->name,
             'deceased_name' => $umrah->deceased->name,
             'umrah_status' => $umrah_status
+        ], function ($message) use ($umrah) {
+            $message->to($umrah->deceased->user->email, $umrah->deceased->user->name);
+            $message->from('umrah_updates@umrah4them.com', 'Umrah4Them.com');
+            $message->subject('Umrah Request Status Update');
+            $message->replyTo('noreply@umrah4them.com', $name = null);
+        });
+    }
+
+    public function getStalledUmrahs($days = 3)
+    {
+        return Umrah::where('umrah_status_id', 1) // in progress
+                        ->where('updated_at', '<', Carbon::now()->subDays($days))
+                        ->get();
+    }
+
+    public function sendStalledUmrahEmails($umrah)
+    {
+        // send email to creator
+        \Mail::send('emails.umrah_stalled_cancellation_creator', [
+            'creator_name' => $umrah->deceased->user->name,
+            'deceased_name' => $umrah->deceased->name,
+        ], function ($message) use ($umrah) {
+            $message->to($umrah->deceased->user->email, $umrah->deceased->user->name);
+            $message->from('umrah_updates@umrah4them.com', 'Umrah4Them.com');
+            $message->subject('Umrah Request Status Update');
+            $message->replyTo('noreply@umrah4them.com', $name = null);
+        });
+        // send email to performer
+        \Mail::send('emails.umrah_stalled_cancellation_performer', [
+            'performer_name' => $umrah->user->name,
+            'deceased_name' => $umrah->deceased->name,
         ], function ($message) use ($umrah) {
             $message->to($umrah->user->email, $umrah->user->name);
             $message->from('umrah_updates@umrah4them.com', 'Umrah4Them.com');
             $message->subject('Umrah Request Status Update');
             $message->replyTo('noreply@umrah4them.com', $name = null);
         });
+        // cancel umrah!
+        $this->updateStatus($umrah->deceased_id, 3);
     }
 }
