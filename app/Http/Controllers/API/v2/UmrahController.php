@@ -83,9 +83,15 @@ class UmrahController extends Controller
            ]);
 
         if ($validator->fails()) {
+            $error_message = collect($validator->messages())->flatten()->reduce(function ($messages, $message) {
+                if (empty($messages)) {
+                    return $message;
+                } else {
+                    return $messages . '، ' . $message;
+                }
+            }, '');
             return response()->json([
-                    'Error' =>  'Bad Request: Validation failed.',
-                    'Error Message' =>  $validator->messages()
+                    'error_message' =>  $error_message
                 ], 400);
         } else {
             $deceased = $this->umrah->storeDeceased(

@@ -24,8 +24,15 @@ class UserController extends Controller
         $validator = $this->validator($request->all());
 
         if ($validator->fails()) {
+            $error_message = collect($validator->messages())->flatten()->reduce(function ($messages, $message) {
+                if (empty($messages)) {
+                    return $message;
+                } else {
+                    return $messages . '، ' . $message;
+                }
+            }, '');
             return response()->json([
-                    'error_message' =>  $validator->messages()
+                    'error_message' =>  $error_message
                 ], 400);
         } else {
             return User::Create(
