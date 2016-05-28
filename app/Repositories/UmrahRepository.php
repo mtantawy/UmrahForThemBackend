@@ -40,6 +40,7 @@ class UmrahRepository
 
     public function updateStatus($deceased_id, $status_id)
     {
+        $umrah = null;
         switch ($status_id) {
             case 1:
                 # 1 => 'In Progress', so we create a Umrah
@@ -85,6 +86,9 @@ class UmrahRepository
                 break;
         }
 
+        if (!is_null($umrah)) {
+            $this->sendUmrahStatusUpdateEmail($status_id, $umrah);
+        }
         return $this->getDeceased($deceased_id);
     }
 
@@ -104,5 +108,32 @@ class UmrahRepository
                 ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
                 ->where('umrahs.user_id', \Authorizer::getResourceOwnerId())
                 ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
+    }
+
+    private function sendUmrahStatusUpdateEmail($status_id, $umrah)
+    {
+        switch ($status_id) {
+            case 1:
+                $umrah_status = 'in progress';
+                break;
+
+            case 2:
+                $umrah_status = 'done';
+                break;
+
+            default:
+                return;
+                break;
+        }
+        \Mail::send('emails.umrah_status_update', [
+            'creator_name' => $umrah->user->name,
+            'deceased_name' => $umrah->deceased->name,
+            'umrah_status' => $umrah_status
+        ], function ($message) use ($umrah) {
+            $message->to($umrah->user->email, $umrah->user->name);
+            $message->from('umrah_updates@umrah4them.com', 'Umrah4Them.com');
+            $message->subject('Umrah Request Status Update');
+            $message->replyTo('noreply@umrah4them.com', $name = null);
+        });
     }
 }
