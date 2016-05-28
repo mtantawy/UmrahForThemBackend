@@ -45,6 +45,7 @@ Route::group(['prefix' => 'api'], function () {
             });
             Route::get('users/me', 'UserController@show');
             Route::patch('users/me', 'UserController@update');
+            Route::patch('users/me/updatepassword', 'UserController@updatePassword');
             // these have to be above the "resource" controller thingy to match requests first.
             Route::get('umrah/myrequests', ['as' => 'user.umrah.myrequests', 'uses' => 'UmrahController@myRequests']);
             Route::get('umrah/performedbyme', ['as' => 'user.umrah.performedbyme', 'uses' => 'UmrahController@performedByMe']);
