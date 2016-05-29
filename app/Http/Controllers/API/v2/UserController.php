@@ -81,10 +81,26 @@ class UserController extends Controller
         if ($request->has('email') && !empty($request->input('email'))) {
             $profile = $request->only(['name', 'email', 'sex', 'country', 'city']);
         }
-        if (User::findOrFail($id)->update($profile)) {
-            return Response::json(User::find($id));
+
+        $validator = $this->validator($request->all(), true);
+
+        if ($validator->fails()) {
+            $error_message = collect($validator->messages())->flatten()->reduce(function ($messages, $message) {
+                if (empty($messages)) {
+                    return $message;
+                } else {
+                    return $messages . '، ' . $message;
+                }
+            }, '');
+            return response()->json([
+                    'error_message' =>  $error_message
+                ], 400);
         } else {
-            abort(500);
+            if (User::findOrFail($id)->update($profile)) {
+                return Response::json(User::find($id));
+            } else {
+                abort(500);
+            }
         }
     }
 
@@ -107,13 +123,17 @@ class UserController extends Controller
             ]);
     }
 
-    protected function validator(array $data)
+    protected function validator(array $data, $is_update = false)
     {
-        return Validator::make($data, [
+        $rules = [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required',
-        ]);
+        ];
+
+        if (!$is_update) {
+            $rules['password'] = 'required';
+        }
+        return Validator::make($data, $rules);
     }
 
     public function login(Request $request)
