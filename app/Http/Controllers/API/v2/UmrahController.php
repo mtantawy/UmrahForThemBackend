@@ -220,7 +220,9 @@ class UmrahController extends Controller
     {
         if ($request->has('no_pagination') && $request->input('no_pagination')) {
             // do NOT paginate
-            return $collection->get();
+            return [
+                'data' => $collection->get()
+            ];
         } else {
             // pagination
             $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
