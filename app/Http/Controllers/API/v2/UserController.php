@@ -127,11 +127,14 @@ class UserController extends Controller
     {
         $rules = [
             'name' => 'required|max:255',
-            'email' => "required|email|max:255|unique:users,email,{$data['email']},email",
         ];
 
         if (!$is_update) {
             $rules['password'] = 'required';
+            $rules['email'] = "required|email|max:255|unique:users";
+        } else {
+            $user_id = \Authorizer::getResourceOwnerId();
+            $rules['email'] = "required|email|max:255|unique:users,email,{$user_id}";
         }
         return Validator::make($data, $rules);
     }
