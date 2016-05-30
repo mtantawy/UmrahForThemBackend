@@ -127,7 +127,7 @@ class UserController extends Controller
     {
         $rules = [
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
+            'email' => "required|email|max:255|unique:users,email,{$data['email']},email",
         ];
 
         if (!$is_update) {
@@ -138,7 +138,13 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        $access_token_info = Authorizer::issueAccessToken();
+        try {
+            $access_token_info = Authorizer::issueAccessToken();
+        } catch (InvalidCredentialsException $e) {
+            return response()->json([
+                    'error_message' =>  'Wrong Credentials.'
+                ], 400);
+        }
         $user = User::where('email', $request->input('username'))->first();
         return Response::json([
             'access_token_info' => $access_token_info,
