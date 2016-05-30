@@ -43,6 +43,8 @@ class UmrahController extends Controller
             return $this->prepareDeceased($item);
         });
 
+        $deceased_list = $this->prepareResponse($request, $deceased_list);
+
         return $deceased_list;
     }
 
@@ -66,6 +68,8 @@ class UmrahController extends Controller
         $deceased_list->transform(function ($item, $key) {
             return $this->prepareDeceased($item);
         });
+
+        $deceased_list = $this->prepareResponse($request, $deceased_list);
 
         return $deceased_list;
     }
@@ -213,6 +217,8 @@ class UmrahController extends Controller
             return $this->prepareDeceased($item);
         });
 
+        $deceased_list = $this->prepareResponse($request, $deceased_list);
+
         return $deceased_list;
     }
 
@@ -220,14 +226,17 @@ class UmrahController extends Controller
     {
         if ($request->has('no_pagination') && $request->input('no_pagination')) {
             // do NOT paginate
-            return [
-                'data' => $collection->get()
-            ];
+            return $collection->get();
         } else {
             // pagination
             $per_page = $request->has('per_page') ? $request->input('per_page') : 10;
 
             return $collection->paginate($per_page);
         }
+    }
+
+    private function prepareResponse(Request $request, $collection)
+    {
+        return $request->input('no_pagination', false) ? ['data' => $collection] : $collection;
     }
 }
