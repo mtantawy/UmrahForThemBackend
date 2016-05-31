@@ -1,9 +1,9 @@
 <body>
-    <p>
-        Dear {{ $name }},
+    <p style="direction: rtl;">
+        {{ trans('emails.greeting') }} {{ $name }},
         <br />
         <br />
-        We have received a request to reset your password, please use the password below to login then change it immediately:
+        {{ trans('password_reset.body') }}
         <br />
         {{ $password }}
     </p>

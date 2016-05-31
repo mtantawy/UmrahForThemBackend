@@ -1,8 +1,8 @@
 <body>
-    <p>
-        Dear {{ $creator_name }},
+    <p style="direction: rtl;">
+        {{ trans('emails.greeting') }} {{ $creator_name }}،
         <br />
         <br />
-        The Umrah you requested for {{ $deceased_name }} has been cancelled because it has been in progress for more than 3 days.
+        {{ trans('umrah_stalled_cancellation_creator.body', ['deceased_name' => $deceased_name]) }}
     </p>
 </body>
