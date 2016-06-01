@@ -1,0 +1,7 @@
+<?php
+
+return [
+
+    'greeting'  =>  'Dear'
+
+];

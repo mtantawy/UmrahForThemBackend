@@ -19,6 +19,8 @@ class UmrahTest extends TestCase
     {
         parent::setUp();
 
+        config(['mail.pretend' => true]);
+
         $this->faker = Faker::create();
         $faker = $this->faker;
 

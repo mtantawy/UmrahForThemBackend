@@ -17,6 +17,8 @@ class UsersTest extends TestCase
     {
         parent::setUp();
 
+        config(['mail.pretend' => true]);
+
         $this->faker = Faker::create();
         $faker = $this->faker;
         $this->client_id = $this->faker->randomNumber;
