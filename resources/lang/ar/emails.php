@@ -2,6 +2,7 @@
 
 return [
 
-    'greeting'  =>  'السلام عليكم'
+    'greeting'  =>  'السلام عليكم',
+    'status_update_subject' =>  'حالة طلب العمرة',
 
 ];
