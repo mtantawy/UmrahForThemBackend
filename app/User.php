@@ -72,7 +72,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             \Mail::send('emails.password_reset', ['name' => $this->name, 'password' => $password], function ($message) {
                 $message->to($this->email, $this->name);
                 $message->from('password_reset@umrah4them.com', 'Umrah4Them.com');
-                $message->subject('Password Reset');
+                $message->subject(trans('emails.password_reset_subject'));
                 $message->replyTo('noreply@umrah4them.com', $name = null);
             });
             
