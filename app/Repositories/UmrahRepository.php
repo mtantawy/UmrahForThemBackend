@@ -135,7 +135,7 @@ class UmrahRepository
         ], function ($message) use ($umrah) {
             $message->to($umrah->deceased->user->email, $umrah->deceased->user->name);
             $message->from('umrah_updates@umrah4them.com', 'Umrah4Them.com');
-            $message->subject('Umrah Request Status Update');
+            $message->subject(trans('emails.status_update_subject'));
             $message->replyTo('noreply@umrah4them.com', $name = null);
         });
     }
@@ -156,7 +156,7 @@ class UmrahRepository
         ], function ($message) use ($umrah) {
             $message->to($umrah->deceased->user->email, $umrah->deceased->user->name);
             $message->from('umrah_updates@umrah4them.com', 'Umrah4Them.com');
-            $message->subject('Umrah Request Status Update');
+            $message->subject(trans('emails.status_update_subject'));
             $message->replyTo('noreply@umrah4them.com', $name = null);
         });
         // send email to performer
@@ -166,7 +166,7 @@ class UmrahRepository
         ], function ($message) use ($umrah) {
             $message->to($umrah->user->email, $umrah->user->name);
             $message->from('umrah_updates@umrah4them.com', 'Umrah4Them.com');
-            $message->subject('Umrah Request Status Update');
+            $message->subject(trans('emails.status_update_subject'));
             $message->replyTo('noreply@umrah4them.com', $name = null);
         });
         // cancel umrah!
