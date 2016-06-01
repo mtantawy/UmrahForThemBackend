@@ -117,11 +117,11 @@ class UmrahRepository
     {
         switch ($status_id) {
             case 1:
-                $umrah_status = 'in progress';
+                $umrah_status = trans('emails.in_progress');
                 break;
 
             case 2:
-                $umrah_status = 'done';
+                $umrah_status = trans('emails.done');
                 break;
 
             default:
