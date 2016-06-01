@@ -172,7 +172,7 @@ class UserController extends Controller
                 ];
             } else {
                 return response()->json([
-                        'error_message' =>  'Wrong Password!'
+                        'error_message' =>  trans('auth.wrong_password')
                     ], 400);
             }
         }
