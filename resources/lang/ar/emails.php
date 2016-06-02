@@ -6,6 +6,6 @@ return [
     'status_update_subject' =>  'حالة طلب العمرة',
     'password_reset_subject'    =>  'تغير كلمة المرور',
     'in_progress'   =>  'قيد التنفيذ',
-    'done'          =>  'قد تم آدائها <br> جزاكم الله خيرًا'
+    'done'          =>  'قد تم آدائها. جزاكم الله خيرًا'
 
 ];
