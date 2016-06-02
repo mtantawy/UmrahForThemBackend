@@ -14,14 +14,10 @@
 Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => 'v1', 'namespace' => 'API\v1'], function () {
         Route::post('register', 'UserController@store');
-        Route::post('login', function () {
-            return Response::json(Authorizer::issueAccessToken());
-        });
+        Route::post('login', 'UserController@login');
 
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
-            Route::get('/', function () {
-                return 'API v1!';
-            });
+
             Route::get('deceased/myrequests', ['as' => 'user.deceased.myrequests', 'uses' => 'DeceasedController@myRequests']);
             Route::patch('deceased/{deceased}/updatestatus/{status}', ['as' => 'deceased.umrah.update', 'uses' => 'DeceasedController@updateStatus']);
             Route::resource('deceased', 'DeceasedController', ['except' => ['create', 'edit']]);
@@ -40,9 +36,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('resetpassword', 'UserController@resetPassword');
 
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
-            Route::get('/', function () {
-                return 'API v2!';
-            });
+
             Route::get('users/me', 'UserController@show');
             Route::patch('users/me', 'UserController@update');
             Route::patch('users/me/updatepassword', 'UserController@updatePassword');
@@ -56,12 +50,6 @@ Route::group(['prefix' => 'api'], function () {
         // allow guest mode to view deceased with no umrahs
         Route::get('umrah', ['uses' => 'UmrahController@index']);
     });
-
-    Route::get('/', function () {
-        return 'API Home!';
-    });
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'DashboardController@home');
