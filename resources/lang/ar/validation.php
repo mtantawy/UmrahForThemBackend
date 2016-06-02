@@ -73,7 +73,7 @@ return [
     ],
     'string'               => 'The :attribute must be a string',
     'timezone'             => 'The :attribute must be a valid zone',
-    'unique'               => 'هذا ال :attribute مستخدم بالفعل',
+    'unique'               => 'هذا :attribute مستخدم بالفعل',
     'url'                  => 'The :attribute format is invalid',
 
     /*
