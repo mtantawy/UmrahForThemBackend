@@ -95,4 +95,9 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         return Response::json($user->delete());
     }
+
+    public function login(Request $request)
+    {
+        return Response::json(Authorizer::issueAccessToken());
+    }
 }
