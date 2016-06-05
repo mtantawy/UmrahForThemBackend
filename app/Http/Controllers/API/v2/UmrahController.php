@@ -31,7 +31,7 @@ class UmrahController extends Controller
     {
         // sorting
         $sort_by = $request->has('sort_by') ? $request->input('sort_by') : 'created_at';
-        $sort = $request->has('sort') ? $request->input('sort') : 'desc';
+        $sort = $request->has('sort') ? $request->input('sort') : 'asc';
 
         $deceased_list  = $this->umrah
                                 ->getDeceasedWithNoUmrah()
