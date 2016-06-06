@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Repositories\UmrahRepository;
+use Carbon\Carbon;
 
 class Umrahs extends Command
 {
@@ -38,10 +39,15 @@ class Umrahs extends Command
      */
     public function handle(UmrahRepository $umrah_repository)
     {
+        $count = 0;
         foreach ($umrah_repository->getStalledUmrahs() as $umrah) {
             $umrah_repository->auth_user_id = $umrah->user_id;
             $umrah_repository->sendStalledUmrahEmails($umrah);
             $this->comment(PHP_EOL.'Cancelled Umrah ID: '.$umrah->id.', for Deceased ID: '.$umrah->deceased_id.PHP_EOL);
+            $count++;
+        }
+        if (!$count) {
+            $this->comment('Ran @ ' . Carbon::now() . ' but did nothing!'.PHP_EOL);
         }
     }
 }
