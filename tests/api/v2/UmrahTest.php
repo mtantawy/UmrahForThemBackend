@@ -116,7 +116,7 @@ class UmrahTest extends TestCase
         $headers = $this->transformHeadersToServerVars([
                 'Authorization'  =>  'Bearer '.$this->access_token,
             ]);
-        $response = $this->call('GET', '/api/v2/umrah/', [], [], [], $headers);
+        $response = $this->call('GET', '/api/v2/umrah/?no_pagination=true', [], [], [], $headers);
         $this->assertResponseOk($response);
 
         // checking on id because any other faked data can be repeated
