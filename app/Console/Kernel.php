@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('umrahs:cancel-stalled')
-                 ->daily();
+                 ->daily()
+                 ->appendOutputTo('umrahs-cancel_stalled.log');
     }
 }
