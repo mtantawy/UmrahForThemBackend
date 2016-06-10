@@ -52,4 +52,5 @@ Route::group(['prefix' => 'api'], function () {
     });
 });
 
+Route::get('stats', ['as' => 'app.stats', 'uses' => 'StatsController@index']);
 Route::get('/', 'DashboardController@home');
