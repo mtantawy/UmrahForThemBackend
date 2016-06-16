@@ -19,9 +19,14 @@ class StatsController extends Controller
         $data = [
             \App\User::count(),
             \App\Deceased::count(),
-            \App\Umrah::count()
+            \App\Umrah::count(),
         ];
-        return view('stats', ['data' => $data]);
+
+        $umrahs_pie = [
+            \App\Umrah::where('umrah_status_id', 2)->count(), // done
+            \App\Umrah::where('umrah_status_id', 1)->count(), // in progress
+        ];
+        return view('stats', ['data' => $data, 'umrahs_pie' =>  $umrahs_pie]);
     }
 
     /**
