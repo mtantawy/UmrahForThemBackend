@@ -427,7 +427,7 @@ as a general rule, if the response json contains key "error_message" then someth
 
 ### Delete a Umrah Request [DELETE]
 
-Umrah Request can only be deleted by the user who added it, and only if there are no Umrah currently in progress or done for that deceased.
+Umrah Request can only be deleted by the user who added it, and only if there is no Umrah currently in progress or done for that deceased.
 
 + Request (application/json)
     
@@ -439,7 +439,13 @@ Umrah Request can only be deleted by the user who added it, and only if there ar
 
         {
           "message": "Umrah Request Deleted Successfully"
-        }        
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error_message": "Unauthorized"
+        }
 
 ## Start or Update Umrah Status [/umrah/{deceased_id}/updatestatus/{status_id}]
 
