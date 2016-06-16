@@ -1,0 +1,510 @@
+FORMAT: 1A
+HOST: http://staging.umrah4them.com/api/v2/
+
+# UmrahForThem
+
+This is the API for "Umrah For Them" backend, it uses OAuth2.0 Access Token so make sure to include the Authorization header in the request whenever specified.
+
+The models are quite straight forward, users, deceased, umrahs
+this modeling supports having multiple umrahs per deceased, however, for now, the backend limits umrahs to only 1 per deceased but i have designed it like so for future expansion hopefully isA
+
+As you will see in postman the returned json almost always contains all the info you will need.
+
+There are 3 umrah statuses with IDs as follow:
+
+in progress: 1
+
+done: 2
+
+cancelled: 3 
+
+(actually any cancelled umrah is deleted immediately, so you will use this ID only when manually cancelling any umrah which will trigger the backend to deleted the umrah, as we currently don't need to track cancelled umrahs.
+
+Authentication is done by access token based on OAuth2.0, for simplicity we don't have refresh tokens however i recommend we implement it some time soon.
+
+The API heavily depends on HTTP response code, so make sure to check it and act accordingly.
+
+as a general rule, if the response json contains key "error_message" then something went wrong and 99% the value of that key will be the translated error message so you'll just have to display it as is, also the response code will be 400 or 404, as mentioned earlier.
+
+## Register a New User [/register]
+
+### Register a New User [POST]
+
++ Request (application/json)
+        
+        {
+            "name": "full name",
+            "email": "email@example.com",
+            "password": "p@ssw0rd",
+            "sex": "male",
+            "country": "Egypt",
+            "city": "Cairo"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "name": "full name",
+            "email": "email@example.com",
+            "sex": "male",
+            "country": "Egypt",
+            "city": "Cairo"
+            "id": 302
+        }
+
+## Login & get Access Token [/login]
+
+### Login & get Access Token [POST]
+
++ Request (application/json)
+        
+        {
+            "grant_type": "password",
+            "client_id": "client_id",
+            "client_secret": "client_secret",
+            "username": "email@example.com",
+            "password": "p@ssw0rd"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "access_token_info": {
+                "access_token": "epf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz",
+                "token_type": "Bearer",
+                "expires_in": 2592000
+            },
+            "user_info": {
+                "name": "full name",
+                "email": "email@example.com",
+                "sex": "male",
+                "country": "Egypt",
+                "city": "Cairo"
+                "id": 302
+            }
+        }
+
+## Reset User Password [/resetpassword]
+
+### Reset User Password [POST]
+
++ Request (application/json)
+    
+    + Body
+        
+            {
+                "email": "email@example.com"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "message": "We sent a password reset email to: 123123@hotmail.com"
+        }
+
+## User Profile [/users/me]
+
+### Get User Profile [GET]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+
++ Response 200 (application/json)
+
+        {
+            "name": "full name",
+            "email": "email@example.com",
+            "sex": "male",
+            "country": "Egypt",
+            "city": "Cairo"
+            "id": 302
+            "umrah_requests_count": 0,
+            "in_progress_umrahs_count": 0,
+            "done_umrahs_count": 0,
+            "deceased": []
+        }
+
+### Update User Profile [PATCH]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
+    + Body
+    
+            {
+                "name": "New Name",
+                "email": "newemail@example.com",
+                "sex": "female",
+                "country": "Egypt",
+                "city": "Cairo"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "name": "New Name",
+            "email": "newemail@example.com",
+            "sex": "female",
+            "country": "Egypt",
+            "city": "Cairo"
+            "id": 302
+        }
+
+## Update User Password [/users/me/updatepassword]
+
+### Update User Password [PATCH]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
+    + Body
+    
+            {
+                "old_password": "p@ssw0rd",
+                "password": "new_password"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "name": "New Name",
+            "email": "newemail@example.com",
+            "sex": "female",
+            "country": "Egypt",
+            "city": "Cairo"
+            "id": 302
+        }
+
+## Umrah Requests [/umrah]
+
+### Add Umrah Request [POST]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
+    + Body
+    
+            {
+                "name": "Ahmed Mahmoud",
+                "sex":  "male",
+                "age":  "60",
+                "country":  "Egypt",
+                "city": "Cairo",
+                "death_cause":  "heart attack",
+                "death_date":   "2015-01-01"
+            }
+            
++ Response 200 (application/json)
+
+        {
+            "id": 6,
+            "name": "Ahmed Mahmoud",
+            "age": 60,
+            "sex": "male",
+            "country": "Egypt",
+            "city": "Cairo",
+            "death_cause": "heart attack",
+            "death_date": "2015-01-01",
+            "creator_id": 3
+        }
+        
+### Get Umrah Request [GET]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
++ Response 200 (application/json)
+
+        {
+          "total": 2,
+          "per_page": 10,
+          "current_page": 1,
+          "last_page": 1,
+          "next_page_url": null,
+          "prev_page_url": null,
+          "from": 1,
+          "to": 2,
+          "data": [
+            {
+              "id": 5,
+              "name": "Ahmed Mahmoud",
+              "sex": "male",
+              "age": 60,
+              "country": "Egypt",
+              "city": "Cairo",
+              "death_cause": "heart attack",
+              "death_date": "2015-01-01",
+              "created_at": "2016-06-11 13:17:31",
+              "updated_at": "2016-06-11 13:17:31",
+              "creator": {
+                "name": "Mahmoud Tantawy",
+                "email": "123123@hotmail.com",
+                "sex": "male",
+                "country": "Egypt",
+                "city": "Cairo",
+                "user_id": null
+              },
+              "umrahs": []
+            },
+            {
+              "id": 6,
+              "name": "Ahmed Mahmoud",
+              "sex": "male",
+              "age": 60,
+              "country": "Egypt",
+              "city": "Cairo",
+              "death_cause": "heart attack",
+              "death_date": "2015-01-01",
+              "created_at": "2016-06-11 13:28:42",
+              "updated_at": "2016-06-11 13:28:42",
+              "creator": {
+                "name": "Mahmoud Tantawy",
+                "email": "123123@hotmail.com",
+                "sex": "male",
+                "country": "Egypt",
+                "city": "Cairo",
+                "user_id": null
+              },
+              "umrahs": []
+            }
+          ]
+        }
+        
+## User Umrah Requests [/umrah/myrequests]
+
+### User Umrah Requests [GET]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
++ Response 200 (application/json)
+
+            {
+              "total": 2,
+              "per_page": 10,
+              "current_page": 1,
+              "last_page": 1,
+              "next_page_url": null,
+              "prev_page_url": null,
+              "from": 1,
+              "to": 2,
+              "data": [
+                {
+                  "id": 6,
+                  "name": "Ahmed Mahmoud",
+                  "sex": "male",
+                  "age": 60,
+                  "country": "Egypt",
+                  "city": "Cairo",
+                  "death_cause": "heart attack",
+                  "death_date": "2015-01-01",
+                  "created_at": "2016-06-11 13:28:42",
+                  "updated_at": "2016-06-11 13:28:42",
+                  "creator": {
+                    "name": "Mahmoud Tantawy",
+                    "email": "123123@hotmail.com",
+                    "sex": "male",
+                    "country": "Egypt",
+                    "city": "Cairo",
+                    "user_id": null
+                  },
+                  "umrahs": []
+                },
+                {
+                  "id": 5,
+                  "name": "Ahmed Mahmoud",
+                  "sex": "male",
+                  "age": 60,
+                  "country": "Egypt",
+                  "city": "Cairo",
+                  "death_cause": "heart attack",
+                  "death_date": "2015-01-01",
+                  "created_at": "2016-06-11 13:17:31",
+                  "updated_at": "2016-06-11 13:17:31",
+                  "creator": {
+                    "name": "Mahmoud Tantawy",
+                    "email": "123123@hotmail.com",
+                    "sex": "male",
+                    "country": "Egypt",
+                    "city": "Cairo",
+                    "user_id": null
+                  },
+                  "umrahs": []
+                }
+              ]
+            }
+            
+## Get Umrahs Performed by User [/umrah/performedbyme]
+
+### Get Umrahs Performed by User [GET]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
++ Response 200 (application/json)
+
+            {
+                "total": 0,
+                "per_page": 10,
+                "current_page": 1,
+                "last_page": 0,
+                "next_page_url": null,
+                "prev_page_url": null,
+                "from": 1,
+                "to": 0,
+                "data": []
+            }
+        
+## Update or Delete Umrah Request [/umrah/{deceased_id}]
+
++ Parameters
+    + deceased_id (number) - ID of the Deceased in the form of an integer
+
+### Update Umrah Request Details [POST]
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
+    + Body
+    
+            {
+                "name": "Ahmed Mahmoud",
+                "sex":  "male",
+                "age":  "50",
+                "country":  "Egypt",
+                "city": "Cairo",
+                "death_cause":  "heart attack",
+                "death_date":   "2015-01-01"
+            }
+            
++ Response 200 (application/json)
+
+        {
+            "id": 6,
+            "name": "Ahmed Mohamed",
+            "sex": "male",
+            "age": 50,
+            "country": "Egypt",
+            "city": "Cairo",
+            "death_cause": "heart attack",
+            "death_date": "2015-01-01",
+            "created_at": "2016-06-11 13:28:42",
+            "updated_at": "2016-06-11 14:12:11",
+            "creator": {
+            "name": "Mahmoud Tantawy",
+            "email": "123123@hotmail.com",
+            "sex": "male",
+            "country": "Egypt",
+            "city": "Cairo",
+            "user_id": 3
+            },
+            "umrahs": []
+        }
+
+### Delete a Umrah Request [DELETE]
+
+Umrah Request can only be deleted by the user who added it, and only if there are no Umrah currently in progress or done for that deceased.
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
++ Response 200 (application/json)
+
+        {
+          "message": "Umrah Request Deleted Successfully"
+        }        
+
+## Start or Update Umrah Status [/umrah/{deceased_id}/updatestatus/{status_id}]
+
++ Parameters
+    + deceased_id (number) - ID of the Deceased in the form of an integer
+    + status_id (number) - ID of the Status in the form of an integer
+
+### Start or Update Umrah Status [PATCH]
+
+in progress: 1
+
+done: 2
+
+cancelled: 3 
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
++ Response 200 (application/json)
+
+        {
+          "id": 6,
+          "name": "Ahmed Mohamed",
+          "sex": "male",
+          "age": 50,
+          "country": "Egypt",
+          "city": "Cairo",
+          "death_cause": "heart attack",
+          "death_date": "2015-01-01",
+          "created_at": "2016-06-11 13:28:42",
+          "updated_at": "2016-06-11 14:12:11",
+          "creator": {
+            "name": "Mahmoud Tantawy",
+            "email": "123123@hotmail.com",
+            "sex": "male",
+            "country": "Egypt",
+            "city": "Cairo",
+            "user_id": 3
+          },
+          "umrahs": [
+            {
+              "id": 5,
+              "created_at": "2016-06-11 14:31:52",
+              "updated_at": "2016-06-11 14:31:52",
+              "performer": {
+                "id": 3,
+                "name": "Mahmoud Tantawy",
+                "email": "123123@hotmail.com",
+                "sex": "male",
+                "country": "Egypt",
+                "city": "Cairo"
+              },
+              "umrah_status": {
+                "id": 1,
+                "status": "In Progress"
+              }
+            }
+          ]
+        }
+        
++ Response 200 (application/json)
+
+        {
+          "message": "Umrah Cancelled Successfully"
+        }
