@@ -172,4 +172,19 @@ class UmrahRepository
         // cancel umrah!
         $this->updateStatus($umrah->deceased_id, 3);
     }
+
+    public function deleteDeceased($id)
+    {
+        $deceased = Deceased::findOrFail($id);
+        // check if auth user is the one who added this deceased
+        if ($this->auth_user_id != $deceased->user_id) {
+            return false;
+        }
+        // check if the deceased doesn't have any umrahs done or in progress
+        if (0 != $deceased->umrahs()->count()) {
+            return false;
+        }
+
+        return $deceased->delete();
+    }
 }

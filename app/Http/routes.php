@@ -44,7 +44,7 @@ Route::group(['prefix' => 'api'], function () {
             Route::get('umrah/myrequests', ['as' => 'user.umrah.myrequests', 'uses' => 'UmrahController@myRequests']);
             Route::get('umrah/performedbyme', ['as' => 'user.umrah.performedbyme', 'uses' => 'UmrahController@performedByMe']);
             Route::patch('umrah/{deceased}/updatestatus/{status}', ['as' => 'deceased.umrah.update', 'uses' => 'UmrahController@updateStatus']);
-            Route::resource('umrah', 'UmrahController', ['except'   =>  ['create', 'edit', 'destroy']]);
+            Route::resource('umrah', 'UmrahController', ['except'   =>  ['create', 'edit']]);
         });
 
         // allow guest mode to view deceased with no umrahs

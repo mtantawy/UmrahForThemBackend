@@ -239,4 +239,17 @@ class UmrahController extends Controller
     {
         return $request->input('no_pagination', false) ? ['data' => $collection] : $collection;
     }
+
+    public function destroy($id)
+    {
+        if ($this->umrah->deleteDeceased($id)) {
+            return response()->json([
+                'message'   =>  'Umrah Request Deleted Successfully'
+            ]);
+        } else {
+            return response()->json([
+                'error_message' =>  'Unauthorized',
+            ], 401);
+        }
+    }
 }
