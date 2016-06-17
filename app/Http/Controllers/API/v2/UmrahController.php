@@ -189,7 +189,7 @@ class UmrahController extends Controller
         $result = $this->umrah->updateStatus($deceased, $status);
         if ($result instanceof \App\Deceased) {
             return $this->prepareDeceased($result);
-        } elseif (true == $result) {
+        } elseif (true === $result) {
             return response()->json([
                 'message'   =>  'Umrah Cancelled Successfully'
             ]);
