@@ -20,6 +20,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'city'  =>  $faker->city,
         'country'   =>  $faker->country,
         'sex'   =>  $faker->boolean(50) ? 'male' : 'female',
+        'hide_performer_info'   =>  $faker->boolean(50) ? true : false,
     ];
 });
 
