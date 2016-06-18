@@ -207,7 +207,7 @@ class UmrahRepository
             'death_date'
         ];
 
-        if ($filters->has('keyword') && strlen($filters->input('keyword')) >= 3) {
+        if ($filters->has('keyword') && (strlen($filters->input('keyword')) >= 3 || is_numeric($filters->input('keyword')))) {
             $keyword = $filters->input('keyword');
             $keyword_like = '%' . str_replace(' ', '%', $keyword) . '%';
             // search for the keyword in everything
