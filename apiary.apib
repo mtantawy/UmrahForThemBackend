@@ -522,3 +522,63 @@ cancelled: 3
         {
           "message": "Umrah Cancelled Successfully"
         }
+
+## Search Umrah Requests [/umrah/search]
+
+### Search Umrah Requests [GET]
+
+Quick Search using keyword: ?keyword=ahmed or ?keyword=50
+
+Advanced Search using different fields as: ?age=50&name=ahmed
+
+Supported Fields: name, sex, age, country, city, death_cause, death_date
+
+Minimum length of a search value is 3 characters, except for numeric values as "age".
+
++ Request (application/json)
+    
+    + Headers
+    
+            Authorization: Bearer dpf0NWg7ClKBCfYl3tkZh6PC4lW8zbPhYooHzLpz
+            
++ Response 200 (application/json)
+
+        {
+          "total": 1,
+          "per_page": 15,
+          "current_page": 1,
+          "last_page": 1,
+          "next_page_url": null,
+          "prev_page_url": null,
+          "from": 1,
+          "to": 1,
+          "data": [
+            {
+              "id": 16,
+              "name": "Kaleb Collins I",
+              "sex": "male",
+              "age": 20,
+              "country": "Hungary",
+              "city": "Lake Stacy",
+              "death_cause": "Quis non eveniet doloribus vitae soluta dignissimos. Praesentium non est ex cumque ipsa eum dolorem vel. Veniam soluta expedita porro.",
+              "death_date": "1997-07-03",
+              "created_at": "2016-05-28 11:16:34",
+              "updated_at": "2016-05-28 11:16:34",
+              "user_id": 334
+            }
+          ]
+        }
+        
++ Response 200 (application/json)
+
+        {
+          "total": 0,
+          "per_page": 15,
+          "current_page": 1,
+          "last_page": 0,
+          "next_page_url": null,
+          "prev_page_url": null,
+          "from": 1,
+          "to": 0,
+          "data": []
+        }
