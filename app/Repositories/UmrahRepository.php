@@ -187,4 +187,65 @@ class UmrahRepository
 
         return $deceased->delete();
     }
+
+    public function searchDeceased($filters)
+    {
+        $string_columns = [
+            'name',
+            'country',
+            'city',
+            'death_cause'
+        ];
+
+        $all_columns = [
+            'name',
+            'sex',
+            'age',
+            'country',
+            'city',
+            'death_cause',
+            'death_date'
+        ];
+
+        if ($filters->has('keyword') && (strlen($filters->input('keyword')) >= 3 || is_numeric($filters->input('keyword')))) {
+            $keyword = $filters->input('keyword');
+            $keyword_like = '%' . str_replace(' ', '%', $keyword) . '%';
+            // search for the keyword in everything
+            return Deceased::where('name', 'LIKE', $keyword_like)
+                             ->orWhere('sex', $keyword)
+                             ->orWhere('age', $keyword)
+                             ->orWhere('country', 'LIKE', $keyword_like)
+                             ->orWhere('city', 'LIKE', $keyword_like)
+                             ->orWhere('death_cause', 'LIKE', $keyword_like)
+                             ->orWhere('death_date', $keyword)
+                             ->paginate();
+        } else {
+            $query = Deceased::Query();
+            foreach ($filters->all() as $key => $value) {
+                if (!in_array($key, $all_columns)) {
+                    continue;
+                }
+                // !is_numeric to avoid hitting the age column
+                if (strlen($value) < 3 && !is_numeric($value)) {
+                    continue;
+                }
+
+                if (in_array($key, $string_columns)) {
+                    $value_like = '%' . str_replace(' ', '%', $value) . '%';
+                    $query->orWhere($key, 'LIKE', $value_like);
+                } else {
+                    $query->orWhere($key, '=', $value);
+                }
+            }
+
+            if (empty($query->getBindings())) {
+                // we will reach here if NO where statements were added
+                // we don't want to return all results, instead want to return no results
+                // so we fake a bad query
+                // this needs a better idea!
+                $query->WhereRaw('1=0');
+            }
+            return $query->paginate();
+        }
+    }
 }

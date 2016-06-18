@@ -145,7 +145,9 @@ class UmrahController extends Controller
 
         // prepare umrah info
         $deceased->umrahs->transform(function ($item, $key) {
-            $item->performer = $item->user;
+            if (!$item->user->hide_performer_info) {
+                $item->performer = $item->user;
+            }
             return $item;
         });
         // unset()
@@ -251,5 +253,10 @@ class UmrahController extends Controller
                 'error_message' =>  'Unauthorized',
             ], 401);
         }
+    }
+
+    public function search(Request $request)
+    {
+        return response()->json($this->umrah->searchDeceased($request));
     }
 }

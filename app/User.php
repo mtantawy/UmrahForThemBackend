@@ -16,6 +16,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected $casts = [
         'id' => 'integer',
+        'hide_performer_info'   =>  'boolean'
     ];
 
     /**
@@ -30,7 +31,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password', 'sex', 'country', 'city'];
+    protected $fillable = ['name', 'email', 'password', 'sex', 'country', 'city', 'hide_performer_info'];
 
     /**
      * The attributes excluded from the model's JSON form.

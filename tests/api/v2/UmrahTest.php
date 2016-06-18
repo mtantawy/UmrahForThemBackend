@@ -169,7 +169,7 @@ class UmrahTest extends TestCase
         $response = $this->call('GET', '/api/v2/umrah/'.$deceased->id, [], [], [], $headers);
         $this->assertResponseOk($response);
         // check for deceased details and umrah details
-        $this->seeJson([
+        $expected = [
             'id'    =>  $deceased->id,
             'creator'   =>  [
                 'user_id'   =>  $deceased->user->id,
@@ -184,14 +184,6 @@ class UmrahTest extends TestCase
                     'id'    =>  $deceased->umrahs()->first()->id,
                     'created_at'    =>  $deceased->umrahs()->first()->created_at->toDateTimeString(),
                     'updated_at'    =>  $deceased->umrahs()->first()->updated_at->toDateTimeString(),
-                    'performer'     =>  [
-                        'id'    =>  $deceased->umrahs()->first()->user->id,
-                        'name'  =>  $deceased->umrahs()->first()->user->name,
-                        'email' =>  $deceased->umrahs()->first()->user->email,
-                        'city'      =>  $deceased->umrahs()->first()->user->city,
-                        'country'   =>  $deceased->umrahs()->first()->user->country,
-                        'sex'      =>  $deceased->umrahs()->first()->user->sex,
-                    ],
                     'umrah_status'  =>  [
                         'id'    =>  $deceased->umrahs()->first()->umrahStatus->id,
                         'status'    =>  $deceased->umrahs()->first()->umrahStatus->status,
@@ -199,7 +191,19 @@ class UmrahTest extends TestCase
 
                 ]
             ],
-        ]);
+        ];
+        // add performer if not hidden
+        if (!$deceased->umrahs()->first()->user->hide_performer_info) {
+            $expected['umrahs'][0]['performer'] = [
+                'id'    =>  $deceased->umrahs()->first()->user->id,
+                'name'  =>  $deceased->umrahs()->first()->user->name,
+                'email' =>  $deceased->umrahs()->first()->user->email,
+                'city'      =>  $deceased->umrahs()->first()->user->city,
+                'country'   =>  $deceased->umrahs()->first()->user->country,
+                'sex'       =>  $deceased->umrahs()->first()->user->sex,
+            ];
+        }
+        $this->seeJson();
     }
 
     /**
