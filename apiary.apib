@@ -38,7 +38,8 @@ as a general rule, if the response json contains key "error_message" then someth
             "password": "p@ssw0rd",
             "sex": "male",
             "country": "Egypt",
-            "city": "Cairo"
+            "city": "Cairo",
+            "hide_performer_info": false
         }
 
 + Response 200 (application/json)
@@ -48,7 +49,8 @@ as a general rule, if the response json contains key "error_message" then someth
             "email": "email@example.com",
             "sex": "male",
             "country": "Egypt",
-            "city": "Cairo"
+            "city": "Cairo",
+            "hide_performer_info": false,
             "id": 302
         }
 
@@ -79,7 +81,8 @@ as a general rule, if the response json contains key "error_message" then someth
                 "email": "email@example.com",
                 "sex": "male",
                 "country": "Egypt",
-                "city": "Cairo"
+                "city": "Cairo",
+                "hide_performer_info": false,
                 "id": 302
             }
         }
@@ -124,6 +127,7 @@ as a general rule, if the response json contains key "error_message" then someth
             "umrah_requests_count": 0,
             "in_progress_umrahs_count": 0,
             "done_umrahs_count": 0,
+            "hide_performer_info": false,
             "deceased": []
         }
 
@@ -142,7 +146,8 @@ as a general rule, if the response json contains key "error_message" then someth
                 "email": "newemail@example.com",
                 "sex": "female",
                 "country": "Egypt",
-                "city": "Cairo"
+                "city": "Cairo",
+                "hide_performer_info": true
             }
 
 + Response 200 (application/json)
@@ -152,7 +157,8 @@ as a general rule, if the response json contains key "error_message" then someth
             "email": "newemail@example.com",
             "sex": "female",
             "country": "Egypt",
-            "city": "Cairo"
+            "city": "Cairo",
+            "hide_performer_info": true,
             "id": 302
         }
 
@@ -180,7 +186,8 @@ as a general rule, if the response json contains key "error_message" then someth
             "email": "newemail@example.com",
             "sex": "female",
             "country": "Egypt",
-            "city": "Cairo"
+            "city": "Cairo",
+            "hide_performer_info": false,
             "id": 302
         }
 
@@ -499,7 +506,8 @@ cancelled: 3
                 "email": "123123@hotmail.com",
                 "sex": "male",
                 "country": "Egypt",
-                "city": "Cairo"
+                "city": "Cairo",
+                "hide_performer_info": false
               },
               "umrah_status": {
                 "id": 1,
