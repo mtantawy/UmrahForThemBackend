@@ -254,4 +254,9 @@ class UmrahController extends Controller
             ], 401);
         }
     }
+
+    public function search(Request $request)
+    {
+        return response()->json($this->umrah->searchDeceased($request));
+    }
 }
