@@ -145,7 +145,7 @@ class UmrahController extends Controller
 
         // prepare umrah info
         $deceased->umrahs->transform(function ($item, $key) {
-            if (!$item->user->hide_performer_info) {
+            if (!$item->user->hide_performer_info || $item->user->id == \Authorizer::getResourceOwnerId()) {
                 $item->performer = $item->user;
             }
             return $item;
