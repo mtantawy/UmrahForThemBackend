@@ -105,7 +105,9 @@ class UmrahController extends Controller
                 ], 400);
         } else {
             $deceased = $this->umrah->storeDeceased(
-                $request->only('name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date')
+                $request->only([
+                    'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before'
+                ])
             );
 
             return [
@@ -174,7 +176,9 @@ class UmrahController extends Controller
         \Auth::loginUsingId(\Authorizer::getResourceOwnerId());
         $this->authorize('update', $this->umrah->getDeceased($id));
 
-        $data = $request->only(['name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date']);
+        $data = $request->only([
+            'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before'
+        ]);
         $result = $this->umrah->updateDeceased($id, $data);
         if ($result instanceof \App\Deceased) {
             return $this->prepareDeceased($result);
