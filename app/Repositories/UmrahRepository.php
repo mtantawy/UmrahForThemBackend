@@ -55,7 +55,7 @@ class UmrahRepository
                                                         ->whereIn('umrah_statuses.id', [1, 2])
                                                         ->count();
                 if (0 != $count_of_umrahs_for_deceased) {
-                    return 'There is already an Umrah being performed for this Deceased.';
+                    return trans('umrah.umrah_being_performed_already_warning');
                 }
                 // if no umrah for this user for this deceased, create one with status in progress
                 if (0 == Deceased::findOrFail($deceased_id)->umrahs()->where('user_id', $this->auth_user_id)->count()) {
