@@ -106,7 +106,7 @@ class UmrahController extends Controller
         } else {
             $deceased = $this->umrah->storeDeceased(
                 $request->only([
-                    'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before'
+                    'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before', 'death_cause_id'
                 ])
             );
 
@@ -119,7 +119,8 @@ class UmrahController extends Controller
                 'city'  =>  $deceased->city,
                 'death_cause'   =>  $deceased->death_cause,
                 'death_date'    =>  $deceased->death_date,
-                'creator_id'    =>  $deceased->user_id
+                'creator_id'    =>  $deceased->user_id,
+                'done_umrah_before' =>  $deceased->done_umrah_before,
             ];
         }
     }
@@ -144,7 +145,6 @@ class UmrahController extends Controller
         unset($deceased->user);
         unset($deceased->user_id);
         unset($deceased->creator->id);
-        unset($deceased->death_cause_id);
 
         // prepare umrah info
         $deceased->umrahs->transform(function ($item, $key) {
@@ -178,7 +178,7 @@ class UmrahController extends Controller
         $this->authorize('update', $this->umrah->getDeceased($id));
 
         $data = $request->only([
-            'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before'
+            'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before', 'death_cause_id'
         ]);
         $result = $this->umrah->updateDeceased($id, $data);
         if ($result instanceof \App\Deceased) {
