@@ -11,6 +11,7 @@ class Deceased extends Model
         'age'       =>  'integer',
         'user_id'   =>  'integer',
         'id'        =>  'integer',
+        'death_cause_id'        =>  'integer',
         'done_umrah_before' =>  'boolean',
     ];
     protected $fillable = [
