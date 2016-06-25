@@ -47,6 +47,7 @@ class UmrahTest extends TestCase
             'death_cause'   =>  $this->faker->text,
             'death_date'    =>  $this->faker->date('Y-m-d', 'now'),
             'user_id'   =>  $this->created_user_id,
+            'done_umrah_before' =>  $this->faker->boolean(50) ? true : false,
         ];
         $headers = $this->transformHeadersToServerVars([
                 'Authorization'  =>  'Bearer '.$this->access_token,

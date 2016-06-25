@@ -35,6 +35,7 @@ $factory->define(App\Deceased::class, function (Faker\Generator $faker) {
         'death_date'    =>  $faker->date('Y-m-d', 'now'),
         'user_id'   =>  factory(App\User::class)->create()->id,
         'done_umrah_before' =>  $faker->boolean(50) ? true : false,
+        'death_cause_id'    => \App\DeathCause::all()->random()->id,
     ];
 });
 
