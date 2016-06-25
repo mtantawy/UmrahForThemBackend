@@ -144,6 +144,7 @@ class UmrahController extends Controller
         unset($deceased->user);
         unset($deceased->user_id);
         unset($deceased->creator->id);
+        unset($deceased->death_cause_id);
 
         // prepare umrah info
         $deceased->umrahs->transform(function ($item, $key) {

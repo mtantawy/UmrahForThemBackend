@@ -26,19 +26,19 @@ class UmrahRepository
         return Deceased::select('deceased.*')
                 ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
                 ->whereNull('umrahs.created_at')
-                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
     }
 
     public function getMyRequests()
     {
         return Deceased::where('user_id', $this->auth_user_id)
-                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
     }
 
     public function getDeceased($id)
     {
         $deceased = Deceased::findOrFail($id);
-        return $deceased->load('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
+        return $deceased->load('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
     }
 
     public function updateStatus($deceased_id, $status_id)
@@ -110,7 +110,7 @@ class UmrahRepository
         return Deceased::select('deceased.*')
                 ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
                 ->where('umrahs.user_id', $this->auth_user_id)
-                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user');
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
     }
 
     private function sendUmrahStatusUpdateEmail($status_id, $umrah)

@@ -24,4 +24,9 @@ class Deceased extends Model
     {
         return $this->hasMany('App\Umrah');
     }
+
+    public function deathCauseObject()
+    {
+        return $this->belongsTo('App\DeathCause', 'death_cause_id');
+    }
 }
