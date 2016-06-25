@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UmrahRepository;
 use LucaDegasperi\OAuth2Server\Exceptions\NoActiveAccessTokenException;
+use App\DeathCause;
 
 class UmrahController extends Controller
 {
@@ -263,5 +264,10 @@ class UmrahController extends Controller
     public function search(Request $request)
     {
         return response()->json($this->umrah->searchDeceased($request));
+    }
+
+    public function deathCauses()
+    {
+        return DeathCause::all();
     }
 }
