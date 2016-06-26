@@ -121,8 +121,14 @@ class UmrahTest extends TestCase
         $this->assertResponseOk($response);
 
         // checking on id because any other faked data can be repeated
-        $this->seeJson(['id' => $deceased_no_umrah->toArray()['id']]);
-        $this->dontSeeJson(['id' => $deceased_with_umrah->toArray()['id']]);
+        $this->seeJson([
+            'id' => $deceased_no_umrah->toArray()['id'],
+            'name' => $deceased_no_umrah->toArray()['name'],
+        ]);
+        $this->dontSeeJson([
+            'id' => $deceased_with_umrah->toArray()['id'],
+            'name' => $deceased_with_umrah->toArray()['name'],
+        ]);
     }
 
     /**
@@ -147,8 +153,14 @@ class UmrahTest extends TestCase
         // checking on id because any other faked data can be repeated
         // see only deceased added by user A
         // don't see deceased added by user B
-        $this->seeJson(['id' => $deceased_user_a->toArray()['id']]);
-        $this->dontSeeJson(['id' => $deceased_user_b->toArray()['id']]);
+        $this->seeJson([
+            'id' => $deceased_user_a->toArray()['id'],
+            'name' => $deceased_user_a->toArray()['name'],
+        ]);
+        $this->dontSeeJson([
+            'id' => $deceased_user_b->toArray()['id'],
+            'name'  =>  $deceased_user_b->toArray()['name'],
+        ]);
     }
 
     /**
@@ -413,8 +425,14 @@ class UmrahTest extends TestCase
         $response = $this->call('GET', '/api/v2/umrah/performedbyme', [], [], [], $headers);
         $this->assertResponseOk($response);
         // see the correct umrah
-        $this->seeJson(['id' => $deceased_b->toArray()['id']]);
+        $this->seeJson([
+            'id' => $deceased_b->toArray()['id'],
+            'name' => $deceased_b->toArray()['name'],
+        ]);
         // don't see the other umrah
-        $this->dontSeeJson(['id' => $deceased_a->toArray()['id']]);
+        $this->dontSeeJson([
+            'id' => $deceased_a->toArray()['id'],
+            'name' => $deceased_a->toArray()['name'],
+        ]);
     }
 }
