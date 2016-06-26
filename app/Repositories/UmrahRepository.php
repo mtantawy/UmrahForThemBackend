@@ -217,7 +217,6 @@ class UmrahRepository
                              ->orWhere('country', 'LIKE', $keyword_like)
                              ->orWhere('city', 'LIKE', $keyword_like)
                              ->orWhere('death_cause', 'LIKE', $keyword_like)
-                             ->orWhere('death_date', $keyword)
                              ->paginate();
         } else {
             $query = Deceased::Query();
