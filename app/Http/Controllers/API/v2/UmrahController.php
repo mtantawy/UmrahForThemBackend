@@ -268,6 +268,6 @@ class UmrahController extends Controller
 
     public function deathCauses()
     {
-        return DeathCause::all();
+        return response()->json(['data' => DeathCause::all()]);
     }
 }
