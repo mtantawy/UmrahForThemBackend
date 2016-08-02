@@ -37,7 +37,8 @@ class UserController extends Controller
         } else {
             return User::Create(
                 array_merge(
-                    $request->only(['name', 'email', 'sex', 'country', 'city', 'hide_performer_info']),
+                    $request->only(['name', 'email', 'sex', 'country', 'city']),
+                    ['hide_performer_info' => $request->input('hide_performer_info', false)],
                     [
                         'password' => bcrypt($request->input('password')),
                         'remember_token' => str_random(10),
@@ -79,7 +80,10 @@ class UserController extends Controller
 
         $profile = [];
         if ($request->has('email') && !empty($request->input('email'))) {
-            $profile = $request->only(['name', 'email', 'sex', 'country', 'city', 'hide_performer_info']);
+            $profile = array_merge(
+                $request->only(['name', 'email', 'sex', 'country', 'city', 'hide_performer_info']),
+                ['hide_performer_info' => $request->input('hide_performer_info', false)]
+            );
         }
 
         $validator = $this->validator($request->all(), true);

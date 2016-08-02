@@ -35,6 +35,7 @@ before_script:
     - mysql -e 'create database umrahforthem;'
     - php artisan migrate
     - php artisan db:seed --class UmrahStatusesTableSeeder
+    - php artisan db:seed --class DeathCausesSeeder
 
 script:
     - vendor/bin/phpunit

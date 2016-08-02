@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Repositories\UmrahRepository;
 use LucaDegasperi\OAuth2Server\Exceptions\NoActiveAccessTokenException;
+use App\DeathCause;
 
 class UmrahController extends Controller
 {
@@ -105,9 +106,13 @@ class UmrahController extends Controller
                 ], 400);
         } else {
             $deceased = $this->umrah->storeDeceased(
-                $request->only([
-                    'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before'
-                ])
+                array_merge(
+                    $request->only([
+                        'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date'
+                    ]),
+                    ['done_umrah_before' => $request->input('done_umrah_before', false)],
+                    ['death_cause_id' => $request->input('death_cause_id', null)]
+                )
             );
 
             return [
@@ -119,7 +124,8 @@ class UmrahController extends Controller
                 'city'  =>  $deceased->city,
                 'death_cause'   =>  $deceased->death_cause,
                 'death_date'    =>  $deceased->death_date,
-                'creator_id'    =>  $deceased->user_id
+                'creator_id'    =>  $deceased->user_id,
+                'done_umrah_before' =>  $deceased->done_umrah_before,
             ];
         }
     }
@@ -177,7 +183,7 @@ class UmrahController extends Controller
         $this->authorize('update', $this->umrah->getDeceased($id));
 
         $data = $request->only([
-            'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before'
+            'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before', 'death_cause_id'
         ]);
         $result = $this->umrah->updateDeceased($id, $data);
         if ($result instanceof \App\Deceased) {
@@ -262,5 +268,10 @@ class UmrahController extends Controller
     public function search(Request $request)
     {
         return response()->json($this->umrah->searchDeceased($request));
+    }
+
+    public function deathCauses()
+    {
+        return response()->json(['data' => DeathCause::all()]);
     }
 }
