@@ -106,9 +106,13 @@ class UmrahController extends Controller
                 ], 400);
         } else {
             $deceased = $this->umrah->storeDeceased(
-                $request->only([
-                    'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date', 'done_umrah_before', 'death_cause_id'
-                ])
+                array_merge(
+                    $request->only([
+                        'name', 'sex', 'age', 'country', 'city', 'death_cause', 'death_date'
+                    ]),
+                    ['done_umrah_before' => $request->input('done_umrah_before', false)],
+                    ['death_cause_id' => $request->input('death_cause_id', null)]
+                )
             );
 
             return [
