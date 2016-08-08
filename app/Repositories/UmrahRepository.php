@@ -212,11 +212,11 @@ class UmrahRepository
             $keyword_like = '%' . str_replace(' ', '%', $keyword) . '%';
             // search for the keyword in everything
             return Deceased::where('name', 'LIKE', $keyword_like)
-                             ->orWhere('sex', $keyword)
-                             ->orWhere('age', $keyword)
-                             ->orWhere('country', 'LIKE', $keyword_like)
-                             ->orWhere('city', 'LIKE', $keyword_like)
-                             ->orWhere('death_cause', 'LIKE', $keyword_like)
+                             ->Where('sex', $keyword)
+                             ->Where('age', $keyword)
+                             ->Where('country', 'LIKE', $keyword_like)
+                             ->Where('city', 'LIKE', $keyword_like)
+                             ->Where('death_cause', 'LIKE', $keyword_like)
                              ->paginate();
         } else {
             $query = Deceased::Query();
