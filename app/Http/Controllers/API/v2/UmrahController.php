@@ -89,7 +89,7 @@ class UmrahController extends Controller
                 'age' => 'required|integer',
                 'country' => 'required|max:255',
                 'city' => 'required|max:255',
-                'death_cause' => 'required|string',
+                'death_cause' => 'required_without:death_cause_id|string',
                 'death_date' => 'required|date',
            ]);
 
