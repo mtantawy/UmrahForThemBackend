@@ -231,9 +231,17 @@ class UmrahRepository
 
                 if (in_array($key, $string_columns)) {
                     $value_like = '%' . str_replace(' ', '%', $value) . '%';
-                    $query->Where($key, 'LIKE', $value_like);
+                    if ($filters->has('use') && strtolower($filters->input('use')) == 'or') {
+                        $query->orWhere($key, 'LIKE', $value_like);
+                    } else {
+                        $query->Where($key, 'LIKE', $value_like);
+                    }
                 } else {
-                    $query->Where($key, '=', $value);
+                    if ($filters->has('use') && strtolower($filters->input('use')) == 'or') {
+                        $query->orWhere($key, '=', $value);
+                    } else {
+                        $query->Where($key, '=', $value);
+                    }
                 }
             }
 
