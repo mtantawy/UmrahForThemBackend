@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deceased extends Model
 {
-    const DONE_UMRAH_BEFORE_TRUE = 1;
     const DONE_UMRAH_BEFORE_FALSE = 0;
-    const DONE_UMRAH_BEFORE_DONTKNOW = 2;
+    const DONE_UMRAH_BEFORE_DONTKNOW = 1;
+    const DONE_UMRAH_BEFORE_TRUE = 2;
 
     protected $table = 'deceased';
     protected $casts = [

@@ -36,6 +36,8 @@ class UmrahController extends Controller
 
         $deceased_list  = $this->umrah
                                 ->getDeceasedWithNoUmrah()
+                                // first order by done_umrah_before, business requirement :/
+                                ->orderBy('done_umrah_before')
                                 ->orderBy($sort_by, $sort);
 
         $deceased_list = $this->paginateIfNeeded($request, $deceased_list);
