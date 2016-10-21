@@ -269,7 +269,13 @@ class UmrahController extends Controller
 
     public function search(Request $request)
     {
-        return response()->json($this->umrah->searchDeceased($request));
+        $deceased_list = $this->umrah->searchDeceased($request);
+
+        $deceased_list->transform(function ($item, $key) {
+            return $this->prepareDeceased($item);
+        });
+
+        return response()->json($deceased_list);
     }
 
     public function deathCauses()

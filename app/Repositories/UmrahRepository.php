@@ -217,6 +217,7 @@ class UmrahRepository
                              ->orWhere('country', 'LIKE', $keyword_like)
                              ->orWhere('city', 'LIKE', $keyword_like)
                              ->orWhere('death_cause', 'LIKE', $keyword_like)
+                             ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject')
                              ->paginate();
         } else {
             $query = Deceased::Query();
@@ -252,7 +253,9 @@ class UmrahRepository
                 // this needs a better idea!
                 $query->WhereRaw('1=0');
             }
-            return $query->paginate();
+            return $query
+                        ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject')
+                        ->paginate();
         }
     }
 }
