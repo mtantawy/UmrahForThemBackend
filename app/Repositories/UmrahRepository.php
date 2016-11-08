@@ -217,6 +217,7 @@ class UmrahRepository
                              ->orWhere('country', 'LIKE', $keyword_like)
                              ->orWhere('city', 'LIKE', $keyword_like)
                              ->orWhere('death_cause', 'LIKE', $keyword_like)
+                             ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject')
                              ->paginate();
         } else {
             $query = Deceased::Query();
@@ -231,9 +232,17 @@ class UmrahRepository
 
                 if (in_array($key, $string_columns)) {
                     $value_like = '%' . str_replace(' ', '%', $value) . '%';
-                    $query->orWhere($key, 'LIKE', $value_like);
+                    if ($filters->has('use') && strtolower($filters->input('use')) == 'or') {
+                        $query->orWhere($key, 'LIKE', $value_like);
+                    } else {
+                        $query->Where($key, 'LIKE', $value_like);
+                    }
                 } else {
-                    $query->orWhere($key, '=', $value);
+                    if ($filters->has('use') && strtolower($filters->input('use')) == 'or') {
+                        $query->orWhere($key, '=', $value);
+                    } else {
+                        $query->Where($key, '=', $value);
+                    }
                 }
             }
 
@@ -244,7 +253,9 @@ class UmrahRepository
                 // this needs a better idea!
                 $query->WhereRaw('1=0');
             }
-            return $query->paginate();
+            return $query
+                        ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject')
+                        ->paginate();
         }
     }
 }

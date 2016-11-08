@@ -6,13 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deceased extends Model
 {
+    const DONE_UMRAH_BEFORE_FALSE = 0;
+    const DONE_UMRAH_BEFORE_DONTKNOW = 1;
+    const DONE_UMRAH_BEFORE_TRUE = 2;
+
     protected $table = 'deceased';
     protected $casts = [
         'age'       =>  'integer',
         'user_id'   =>  'integer',
         'id'        =>  'integer',
         'death_cause_id'        =>  'integer',
-        'done_umrah_before' =>  'boolean',
+        'done_umrah_before' =>  'integer',
     ];
     protected $fillable = [
         'name',

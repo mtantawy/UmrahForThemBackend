@@ -36,6 +36,8 @@ class UmrahController extends Controller
 
         $deceased_list  = $this->umrah
                                 ->getDeceasedWithNoUmrah()
+                                // first order by done_umrah_before, business requirement :/
+                                ->orderBy('done_umrah_before')
                                 ->orderBy($sort_by, $sort);
 
         $deceased_list = $this->paginateIfNeeded($request, $deceased_list);
@@ -89,7 +91,7 @@ class UmrahController extends Controller
                 'age' => 'required|integer',
                 'country' => 'required|max:255',
                 'city' => 'required|max:255',
-                'death_cause' => 'required|string',
+                'death_cause' => 'required_without:death_cause_id|string',
                 'death_date' => 'required|date',
            ]);
 
@@ -153,7 +155,7 @@ class UmrahController extends Controller
 
         // prepare umrah info
         $deceased->umrahs->transform(function ($item, $key) {
-            if (!$item->user->hide_performer_info || $item->user->id == \Authorizer::getResourceOwnerId()) {
+            if (!$item->user->hide_performer_info || (is_null($this->umrah->auth_user_id) ? false : $item->user->id == \Authorizer::getResourceOwnerId())) {
                 $item->performer = $item->user;
             }
             return $item;
@@ -267,7 +269,13 @@ class UmrahController extends Controller
 
     public function search(Request $request)
     {
-        return response()->json($this->umrah->searchDeceased($request));
+        $deceased_list = $this->umrah->searchDeceased($request);
+
+        $deceased_list->transform(function ($item, $key) {
+            return $this->prepareDeceased($item);
+        });
+
+        return response()->json($deceased_list);
     }
 
     public function deathCauses()
