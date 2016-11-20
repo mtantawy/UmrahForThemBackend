@@ -212,7 +212,8 @@ class UmrahRepository
             'country',
             'city',
             'death_cause',
-            'death_date'
+            'death_date',
+            'death_cause_id'
         ];
 
         if ($filters->has('keyword') && (strlen($filters->input('keyword')) >= 3 || is_numeric($filters->input('keyword')))) {
