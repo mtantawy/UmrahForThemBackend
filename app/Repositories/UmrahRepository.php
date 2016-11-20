@@ -29,6 +29,14 @@ class UmrahRepository
                 ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
     }
 
+    public function getDoneUmrahs()
+    {
+        return Deceased::select('deceased.*')
+                ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
+                ->where('umrahs.umrah_status_id', '=', 2)
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
+    }
+
     public function getMyRequests()
     {
         return Deceased::where('user_id', $this->auth_user_id)
