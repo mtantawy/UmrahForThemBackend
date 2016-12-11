@@ -52,6 +52,32 @@ class UmrahController extends Controller
     }
 
     /**
+     * Display a listing of the Deceased whose Umrah(s) has/have "Done" status.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function doneUmrahs(Request $request)
+    {
+        // sorting
+        $sort_by = $request->has('sort_by') ? $request->input('sort_by') : 'created_at';
+        $sort = $request->has('sort') ? $request->input('sort') : 'asc';
+
+        $deceased_list  = $this->umrah
+                                ->getDoneUmrahs()
+                                ->orderBy($sort_by, $sort);
+
+        $deceased_list = $this->paginateIfNeeded($request, $deceased_list);
+                                
+        $deceased_list->transform(function ($item, $key) {
+            return $this->prepareDeceased($item);
+        });
+
+        $deceased_list = $this->prepareResponse($request, $deceased_list);
+
+        return $deceased_list;
+    }
+
+    /**
      * Display a listing of umrahs requested by me (deceased added by me).
      *
      * @return \Illuminate\Http\Response

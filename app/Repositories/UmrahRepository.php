@@ -29,6 +29,14 @@ class UmrahRepository
                 ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
     }
 
+    public function getDoneUmrahs()
+    {
+        return Deceased::select('deceased.*')
+                ->leftjoin('umrahs', 'umrahs.deceased_id', '=', 'deceased.id')
+                ->where('umrahs.umrah_status_id', '=', 2)
+                ->with('user', 'umrahs', 'umrahs.umrahStatus', 'umrahs.user', 'deathCauseObject');
+    }
+
     public function getMyRequests()
     {
         return Deceased::where('user_id', $this->auth_user_id)
@@ -204,7 +212,8 @@ class UmrahRepository
             'country',
             'city',
             'death_cause',
-            'death_date'
+            'death_date',
+            'death_cause_id'
         ];
 
         if ($filters->has('keyword') && (strlen($filters->input('keyword')) >= 3 || is_numeric($filters->input('keyword')))) {
