@@ -38,6 +38,7 @@ Route::group(['prefix' => 'api'], function () {
         // Allow guest mode to search, had to placed above to avoid matching with "resource" controller
         Route::get('umrah/search', ['uses'  =>  'UmrahController@search']);
         Route::get('umrah/death_causes', ['uses'  =>  'UmrahController@deathCauses']);
+        Route::get('umrah/doneUmrahs', ['as' => 'user.umrah.doneUmrahs', 'uses' => 'UmrahController@doneUmrahs']);
 
         Route::group(['prefix' => '/', 'middleware' => 'oauth'], function () {
 
@@ -47,7 +48,6 @@ Route::group(['prefix' => 'api'], function () {
             // these have to be above the "resource" controller thingy to match requests first.
             Route::get('umrah/myrequests', ['as' => 'user.umrah.myrequests', 'uses' => 'UmrahController@myRequests']);
             Route::get('umrah/performedbyme', ['as' => 'user.umrah.performedbyme', 'uses' => 'UmrahController@performedByMe']);
-            Route::get('umrah/doneUmrahs', ['as' => 'user.umrah.doneUmrahs', 'uses' => 'UmrahController@doneUmrahs']);
             Route::patch('umrah/{deceased}/updatestatus/{status}', ['as' => 'deceased.umrah.update', 'uses' => 'UmrahController@updateStatus']);
             Route::resource('umrah', 'UmrahController', ['except'   =>  ['create', 'edit']]);
         });
